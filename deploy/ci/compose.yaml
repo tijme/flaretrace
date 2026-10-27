@@ -1,0 +1,64 @@
+# Test several instances of the same production image without mounting a Docker socket.
+services:
+  seed:
+    image: ${FLARETRACE_TEST_IMAGE:-flaretrace-ci-backend}
+    command: [image-seed]
+    volumes:
+      - repair-data:/seed
+  http:
+    image: ${FLARETRACE_IMAGE:-flaretrace-ci-production}
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - http-data:/data
+  repair:
+    image: ${FLARETRACE_IMAGE:-flaretrace-ci-production}
+    command: [--http-port, "8080", --https-port, "8443"]
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - repair-data:/data
+  tls:
+    image: ${FLARETRACE_IMAGE:-flaretrace-ci-production}
+    command: [--domain, tls, --auto-tls, --tls-issuer, internal, --http-port, "8080", --https-port, "8443"]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - tls-data:/data
+  tls-default:
+    image: ${FLARETRACE_IMAGE:-flaretrace-ci-production}
+    command: [--domain, tls-default, --auto-tls, --tls-issuer, internal]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - tls-default-data:/data
+  tests:
+    image: ${FLARETRACE_TEST_IMAGE:-flaretrace-ci-backend}
+    command: [image]
+    depends_on:
+      http:
+        condition: service_started
+      repair:
+        condition: service_started
+      tls:
+        condition: service_started
+      tls-default:
+        condition: service_started
+    environment:
+      SUT_HTTP: http://http
+      SUT_REPAIR: http://repair:8080
+      SUT_TLS: https://tls:8443
+      SUT_REDIRECT: http://tls:8080
+      SUT_TLS_DEFAULT: https://tls-default
+      SUT_REDIRECT_DEFAULT: http://tls-default
+      SUT_EVIDENCE: /evidence
+    volumes:
+      - http-data:/evidence/http:ro
+      - repair-data:/evidence/repair:ro
+      - tls-data:/evidence/tls:ro
+      - tls-default-data:/evidence/tls-default:ro
+      - ../../artifacts/ci:/workspace/artifacts/ci:z
+volumes:
+  http-data:
+  repair-data:
+  tls-data:
+  tls-default-data:

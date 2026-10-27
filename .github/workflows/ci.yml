@@ -1,0 +1,317 @@
+# Run containerized regression suites, documentation checks, and independent coverage gates.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: Documentation contracts / 100%
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          image: flaretrace-ci-documentation
+      - name: Audit Python, JSDoc, templates, and deployment documentation
+        uses: ./.github/actions/run-ci
+        with:
+          stage: documentation
+          image: flaretrace-ci-documentation
+      - name: Publish documentation summary
+        if: always()
+        run: |
+          if test -f artifacts/ci/documentation/summary.md; then
+            cat artifacts/ci/documentation/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: documentation-coverage
+          path: artifacts/ci/documentation/
+          if-no-files-found: error
+          retention-days: 14
+
+  unit:
+    name: Unit tests / Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          python: ${{ matrix.python }}
+          image: flaretrace-ci-unit:${{ matrix.python }}
+      - name: Syntax checks and isolated unit tests
+        uses: ./.github/actions/run-ci
+        with:
+          stage: unit
+          image: flaretrace-ci-unit:${{ matrix.python }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: unit-python-${{ matrix.python }}
+          path: artifacts/ci/unit/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  feature:
+    name: Feature tests / Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          python: ${{ matrix.python }}
+          image: flaretrace-ci-feature:${{ matrix.python }}
+      - name: Authentication, data, media, and application feature tests
+        uses: ./.github/actions/run-ci
+        with:
+          stage: feature
+          image: flaretrace-ci-feature:${{ matrix.python }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: feature-python-${{ matrix.python }}
+          path: artifacts/ci/feature/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  javascript:
+    name: JavaScript tests and 90% coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          image: flaretrace-ci-javascript
+      - name: Browser-script unit tests with deterministic sensors and timers
+        uses: ./.github/actions/run-ci
+        with:
+          stage: javascript
+          image: flaretrace-ci-javascript
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: javascript-coverage
+          path: artifacts/ci/javascript/
+          if-no-files-found: error
+          retention-days: 14
+
+  ui:
+    name: UI tests / ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/build-ci
+        with:
+          target: ui
+          image: flaretrace-ci-ui
+      - name: Desktop/mobile flows, themes, forms, and synthetic capture regressions
+        uses: ./.github/actions/run-ci
+        with:
+          stage: ui
+          image: flaretrace-ci-ui
+          browser: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ui-${{ matrix.browser }}
+          path: artifacts/ci/ui/${{ matrix.browser }}/
+          if-no-files-found: error
+          retention-days: 14
+
+  coverage:
+    name: Python statement and branch coverage / 90%
+    needs: [unit, feature]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: unit-python-3.12
+          path: artifacts/ci/unit/
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: feature-python-3.12
+          path: artifacts/ci/feature/
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          image: flaretrace-ci-coverage
+      - name: Combine independent suites and enforce coverage thresholds
+        uses: ./.github/actions/run-ci
+        with:
+          stage: coverage
+          image: flaretrace-ci-coverage
+      - name: Publish coverage summary
+        if: always()
+        run: |
+          if test -f artifacts/ci/coverage/summary.md; then
+            cat artifacts/ci/coverage/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: python-coverage
+          path: artifacts/ci/coverage/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  image:
+    name: Production Docker image and HTTP smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: deploy/Dockerfile
+          load: true
+          push: false
+          tags: flaretrace-ci-production
+          cache-from: type=gha,scope=production-test
+          cache-to: type=gha,mode=max,scope=production-test
+      - uses: ./.github/actions/build-ci
+        with:
+          target: backend
+          image: flaretrace-ci-backend
+      - name: Test actual HTTP, verified TLS, and restored-storage startup
+        run: |
+          mkdir -p artifacts/ci/image
+          docker compose -p flaretrace-image-ci -f deploy/ci/compose.yaml config --quiet
+          docker compose -p flaretrace-image-ci -f deploy/ci/compose.yaml up -d tests
+          test "$(docker wait "$(docker compose -p flaretrace-image-ci -f deploy/ci/compose.yaml ps -a -q tests)")" = 0
+      - name: Collect production-image logs
+        if: always()
+        run: |
+          mkdir -p artifacts/ci/image
+          docker compose -p flaretrace-image-ci -f deploy/ci/compose.yaml logs --no-color > artifacts/ci/image/compose.log
+      - name: Remove only disposable image-test containers and volumes
+        if: always()
+        run: docker compose -p flaretrace-image-ci -f deploy/ci/compose.yaml down --volumes --remove-orphans
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: production-image-logs
+          path: artifacts/ci/image/
+          if-no-files-found: warn
+          retention-days: 14
+
+  ci:
+    name: CI gate
+    if: always()
+    needs: [documentation, unit, feature, javascript, ui, coverage, image]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every test and coverage job to succeed
+        env:
+          RESULTS: ${{ join(needs.*.result, ',') }}
+        run: |
+          case ",$RESULTS," in
+            *",failure,"*|*",cancelled,"*|*",skipped,"*) exit 1 ;;
+          esac
+
+  publish:
+    name: Publish tested AMD64 and ARM64 images to GHCR
+    needs: [ci]
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' ||
+       startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        id: metadata
+        with:
+          images: ghcr.io/tijme/flaretrace
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=long
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        id: publish
+        with:
+          context: .
+          file: deploy/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha,scope=production-publish
+          cache-to: type=gha,mode=max,scope=production-publish
+      - name: Record published image digest
+        env:
+          IMAGE_DIGEST: ${{ steps.publish.outputs.digest }}
+        run: |
+          printf 'Published image: `ghcr.io/tijme/flaretrace@%s`\n' "$IMAGE_DIGEST" >> "$GITHUB_STEP_SUMMARY"

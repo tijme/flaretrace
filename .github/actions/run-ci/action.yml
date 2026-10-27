@@ -1,0 +1,26 @@
+# Run tests already contained in the shared image; no host-side project launcher is needed.
+name: Run containerized checks
+description: Execute one CI stage with writable reports and no Docker socket in the test container.
+inputs:
+  image:
+    description: Previously built and locally loaded CI image tag.
+    required: true
+  stage:
+    description: Test or documentation stage implemented inside the image.
+    required: true
+  browser:
+    description: Playwright browser engine for the UI stage.
+    default: all
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        TEST_IMAGE: ${{ inputs.image }}
+        TEST_STAGE: ${{ inputs.stage }}
+        TEST_BROWSER: ${{ inputs.browser }}
+      run: |
+        mkdir -p artifacts/ci
+        docker run --rm --init --shm-size=1g --user "$(id -u):$(id -g)" \
+          --volume "$PWD/artifacts/ci:/workspace/artifacts/ci" \
+          "$TEST_IMAGE" "$TEST_STAGE" --browser "$TEST_BROWSER"

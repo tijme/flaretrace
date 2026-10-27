@@ -1,0 +1,4 @@
+{# Reusable landing-template field. Context: selected HTML snapshot and saved-template choices. #}
+<label for="template-html">HTML template <span class="muted">(optional)</span></label>
+<textarea id="template-html" name="template_html" rows="12" spellcheck="false" placeholder="Paste your HTML here.">{{ request.form.get('template_html', (link.template_html if link is defined and link and link.template_html else default_template)) }}</textarea>
+<p class="field-help">HTML is saved and served exactly as entered, including scripts, styles, forms, and external assets. Templates can be up to 10 MB (10,000,000 UTF-8 bytes). Flaretrace appends its runtime script: <code>enable-button</code> requests location first, then camera; <code>disable-button</code> or <code>stop-button</code> stops sharing. Previews run in an isolated sandbox with camera and location access disabled.</p>

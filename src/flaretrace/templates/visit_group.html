@@ -1,0 +1,8 @@
+{# Paginated click-group inspector. Context: group, visits, has_more, and before cursor. #}
+{% extends 'base.html' %}
+{% block title %}Clicks from {{ group.ip }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('link_detail', slug=group.link_id) }}">← {{ group.link_name }}</a>
+<div class="page-heading"><div><h1>Clicks from {{ group.ip or 'Unknown IP' }}</h1><p>{{ group.started_at|display_time }} · {{ group.visit_count }} clicks in this group</p></div></div>
+<section class="panel standalone-group">{% include '_group_clicks.html' %}</section>
+{% endblock %}

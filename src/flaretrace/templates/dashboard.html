@@ -1,0 +1,18 @@
+{# Research-link dashboard. Context: links with aggregated visit and evidence counts. #}
+{% extends 'base.html' %}
+{% block title %}Tracked links{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Tracked links</h1><p>Requests, shared captures, and diagnostics.</p></div><a class="button primary" href="{{ url_for('new_link') }}"><span aria-hidden="true">＋</span> Create a link</a></div>
+{% include '_live_status.html' %}
+<div id="link-list" data-live-region>
+<div class="section-bar"><h2>Tracked links <span class="count">{{ links|length }}</span></h2><span class="muted">{{ visit_count }} request{{ '' if visit_count == 1 else 's' }} collected</span></div>
+{% if links %}
+<section class="panel"><div class="table-scroll"><table><thead><tr><th>Link</th><th>Status</th><th>Requests</th><th>Sharing actions</th><th>Created · UTC</th><th></th></tr></thead><tbody>
+{% for link in links %}<tr data-href="{{ url_for('link_detail', slug=link.id) }}" aria-label="Open {{ link.name }}"><td><a class="row-link" href="{{ url_for('link_detail', slug=link.id) }}">{{ link.name }}<span class="subtext mono">/l/{{ link.public_slug or link.id }}</span></a></td><td>{% if not link.active %}<span class="status neutral">Disabled</span>{% elif link.expires_at and link.expires_at <= current_time %}<span class="status amber">Expired</span>{% else %}<span class="status green">Active</span>{% endif %}</td><td class="mono">{{ link.visits }}</td><td class="mono">{{ link.interactions }}</td><td>{{ link.created_at[:10] }}</td><td><a class="text-link" href="{{ url_for('link_detail', slug=link.id) }}">View <span aria-hidden="true">↗</span></a></td></tr>{% endfor %}
+</tbody></table></div></section>
+{% else %}
+<section class="empty-state"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="12" y="20" width="52" height="32" rx="16"/><rect x="56" y="28" width="52" height="32" rx="16"/><path d="M45 40h30"/></svg><h2>No links configured.</h2><p>Create a link to begin.</p><a class="text-link" href="{{ url_for('new_link') }}">Create your first link <span aria-hidden="true">↗</span></a></section>
+{% endif %}
+</div>
+<div class="context-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><p>Requests can include bots and link previews. Sharing started means the visitor used the sharing button and device diagnostics were received. It does not mean location or camera access was granted.</p></div>
+{% endblock %}

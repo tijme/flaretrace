@@ -1,0 +1,15 @@
+{# Research-link creation form. Context: CSRF token and available saved-template choices. #}
+{% extends 'base.html' %}
+{% block title %}Create a link{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('dashboard') }}">← Tracked links</a>
+<div class="page-heading"><div><h1>Create a tracked link.</h1><p>One URL for requests, location, and camera captures.</p></div></div>
+<div class="form-layout"><form class="panel form-panel" method="post"><input type="hidden" name="csrf" value="{{ csrf }}">
+  <label for="name">Link name</label><input id="name" name="name" maxlength="100" required autofocus placeholder="e.g. Field test — October" value="{{ request.form.get('name','') }}"><p class="field-help">A label for your dashboard. Visitors also see this name.</p>
+  <label for="public-slug">Link segment after /l/ <span class="muted">(optional)</span></label><input id="public-slug" name="public_slug" maxlength="80" pattern="[A-Za-z0-9_-]{1,80}" value="{{ request.form.get('public_slug','') }}" placeholder="Leave empty to generate"><p class="field-help">Letters, digits, underscores and hyphens. Set at creation; cannot be changed later.</p>
+  <label for="destination">Destination URL <span class="muted">(optional)</span></label><input id="destination" name="destination" type="url" maxlength="2000" placeholder="https://example.com" value="{{ request.form.get('destination','') }}"><p class="field-help">Where visitors continue after capture, or if they choose to skip it.</p>
+  <label for="expiry">Link expires after</label><select id="expiry" name="expiry">{% for value,label in [('1','1 day'),('7','7 days'),('30','30 days'),('never','Never')] %}<option value="{{ value }}" {{ 'selected' if request.form.get('expiry','7') == value else '' }}>{{ label }}</option>{% endfor %}</select>
+  <label for="template-id">Template</label><select id="template-id" name="template_id"><option value="" {{ 'selected' if request.form.get('template_id', default_template_id) == '' else '' }}>Blank template</option>{% for option in available_templates %}<option value="{{ option.id }}" {{ 'selected' if request.form.get('template_id', default_template_id) == option.id else '' }}>{{ option.name }}</option>{% endfor %}</select><p class="field-help">Create and edit reusable HTML in <a href="{{ url_for('templates_page') }}">Templates</a>.</p>
+  <div class="form-actions"><button class="button primary" type="submit">Create link <span aria-hidden="true">↗</span></button><a class="button secondary" href="{{ url_for('dashboard') }}">Cancel</a></div>
+</form><aside class="form-aside"><h2>What this link requests</h2><ul class="plain-list"><li>Precise location</li><li>A front camera photo + 5-second video</li><li>A rear camera photo + 5-second video, if available</li></ul><p>Camera captures are silent. The minimal page has one explicit sharing button and one stop/decline button. Recording progress appears in the stop button.</p><p>Each visit also records the request IP, relevant headers, and available browser details. Records are kept until manually deleted. Link expiration only stops new visits.</p></aside></div>
+{% endblock %}

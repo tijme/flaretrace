@@ -1,0 +1,118 @@
+{# Individual evidence inspector. Context: visit, details, overview, events, media, and group. #}
+{% extends 'base.html' %}
+{% block title %}Visit {{ visit.id[:8] }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('link_detail', slug=visit.link_id) }}">← {{ visit.link_name }}</a>
+{% include '_live_status.html' %}
+<div id="visit-details" data-live-region>
+  <div class="page-heading visit-heading">
+    <div><h1>Click from <span class="mono">{{ visit.ip or 'Unknown IP' }}</span></h1><p>{{ visit.created_at|display_time }} · <span class="mono">{{ visit.id[:8] }}</span></p></div>
+    <span class="status {{ overview.tone }}">{{ overview.status }}</span>
+  </div>
+  <p class="visit-summary">{{ overview.summary }}</p>
+  {% if overview.possible_bot %}<p class="visit-notice">The user agent suggests an automated browser or link preview. This does not establish who opened the link.</p>{% endif %}
+  <dl class="facts-strip visit-facts">
+    <div><dt>Sharing started</dt><dd>{{ 'Yes' if visit.interacted else 'Not observed' }}</dd></div>
+    <div><dt>Location</dt><dd><span class="status {{ overview.location.tone }}">{{ overview.location.label }}</span></dd></div>
+    <div><dt>Camera files</dt><dd>{{ media|length }} <span class="fact-note">{{ overview.media_bytes|file_size }}</span></dd></div>
+    <div><dt>Other clicks in group</dt><dd>{% if group and group.visit_count > 1 %}<a href="{{ url_for('visit_group', group_id=group.id) }}">{{ group.visit_count - 1 }} more click{{ '' if group.visit_count == 2 else 's' }}</a>{% else %}None{% endif %}</dd></div>
+  </dl>
+
+  <div class="visit-layout">
+    <div class="visit-main">
+      <div class="visit-overview">
+        <section class="record-section">
+          <h2>Device & browser</h2>
+          <dl class="record-facts">
+            <div><dt>Device</dt><dd>{{ overview.device }}</dd></div>
+            <div><dt>Browser</dt><dd>{{ overview.browser }}</dd></div>
+            <div><dt>Language</dt><dd>{{ overview.language }}</dd></div>
+            <div><dt>Time zone</dt><dd>{{ overview.timezone }}</dd></div>
+            <div><dt>Browser window</dt><dd>{{ overview.viewport }}</dd></div>
+            <div><dt>Connection type</dt><dd>{{ overview.connection }}</dd></div>
+          </dl>
+          <p class="field-help">Based on the request and browser-reported fields. Missing or spoofed information cannot identify a person.</p>
+        </section>
+        <section class="record-section">
+          <h2>Network & source</h2>
+          <dl class="record-facts">
+            <div><dt>Client IP</dt><dd class="mono">{{ visit.ip or 'Not supplied' }}</dd></div>
+            <div><dt>Transport peer</dt><dd class="mono">{{ details.headers.get('Transport-Peer-IP', 'Not stored') }}</dd></div>
+            <div><dt>Referrer</dt><dd>{% if visit.referrer %}<a href="{{ visit.referrer }}" target="_blank" rel="noreferrer noopener">{{ visit.referrer }}</a>{% else %}Direct / not supplied{% endif %}</dd></div>
+            {% if details.ip_info %}
+            <div><dt>Approximate place</dt><dd>{{ overview.ip_place or 'Not reported' }}</dd></div>
+            <div><dt>Network provider</dt><dd>{{ overview.isp }}</dd></div>
+            <div><dt>ASN</dt><dd>{{ overview.asn }}</dd></div>
+            {% else %}<div><dt>IP information</dt><dd>Not looked up</dd></div>{% endif %}
+          </dl>
+          {% if not details.ip_info %}
+          <form method="post" action="{{ url_for('enrich_visit', visit_id=visit.id) }}">
+            <input type="hidden" name="csrf" value="{{ csrf }}">
+            <button class="button secondary" type="submit">Look up IP information</button>
+          </form>
+          <p class="field-help">Optional lookup sends this IP to ipwho.is. Its location is approximate and separate from GPS.</p>
+          {% else %}<p class="field-help">IP lookup supplied by ipwho.is. Network location is approximate and separate from GPS.</p>{% endif %}
+        </section>
+      </div>
+
+      <section class="record-section location-section">
+        <div class="record-heading"><h2>Shared location</h2><span class="status {{ overview.location.tone }}">{{ overview.location.label }}</span></div>
+        {% if details.location %}
+        <div class="location-result">
+          <div><p class="coordinates mono">{{ '%.6f'|format(details.location.latitude) }}, {{ '%.6f'|format(details.location.longitude) }}</p><p class="muted">Reported accuracy: {{ '%.1f'|format(details.location.accuracy) }} metres</p></div>
+          <a class="button secondary" href="https://www.google.com/maps/search/?api=1&query={{ details.location.latitude }}%2C{{ details.location.longitude }}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>
+        </div>
+        <p class="field-help">Coordinates are browser-reported. Opening the map shares them with Google Maps.</p>
+        {% else %}<p class="section-empty">{{ overview.location.explanation }}</p>{% endif %}
+      </section>
+
+      <section class="record-section media-section">
+        <div class="record-heading"><h2>Received photos & videos</h2><span class="muted">{{ overview.photos }} photo{{ '' if overview.photos == 1 else 's' }} · {{ overview.videos }} video{{ '' if overview.videos == 1 else 's' }}</span></div>
+        {% if media %}
+        <div class="media-grid visit-media">
+          {% for item in media %}
+          <figure>
+            {% if item.kind == 'photo' %}<img src="{{ url_for('media_file', media_id=item.id) }}" alt="Submitted {{ item.facing }} camera photo" loading="lazy">{% else %}<video controls playsinline preload="metadata" src="{{ url_for('media_file', media_id=item.id) }}"></video>{% endif %}
+            <figcaption><div><strong>{{ item.facing|capitalize }} camera · {{ item.kind|capitalize }}</strong><span class="subtext">{{ item.size|file_size }} · {{ item.created_at|display_time('clock') }} UTC</span></div><a href="{{ url_for('media_file', media_id=item.id, download='1') }}">Download</a></figcaption>
+          </figure>
+          {% endfor %}
+        </div>
+        {% else %}<p class="section-empty">{{ overview.camera.explanation }}</p>{% endif %}
+      </section>
+
+      <section class="record-section technical-section">
+        <h2>Technical details</h2>
+        <p class="field-help">Original recorded fields are available here when you need to investigate further.</p>
+        <details id="proxy-details"><summary>Proxy headers <span class="muted">{{ proxy_headers|length }}</span></summary>
+          {% if proxy_headers %}<dl class="record-facts header-facts">{% for key,value in proxy_headers.items() %}<div><dt>{{ key }}</dt><dd class="mono">{{ value }}</dd></div>{% endfor %}</dl>{% else %}<p>No forwarded headers were recorded.</p>{% endif %}
+          <p class="field-help">Headers are claims. Only the configured trusted proxy determines the effective client IP.</p>
+        </details>
+        <details id="request-details"><summary>Request headers & user agent</summary><p class="raw-agent">{{ visit.user_agent or 'Not supplied' }}</p><pre>{{ details.headers|tojson(indent=2) }}</pre></details>
+        <details id="browser-details"><summary>Browser data</summary><pre>{{ details.browser|tojson(indent=2) }}</pre></details>
+        <details id="location-details"><summary>All location fields</summary><pre>{{ details.location|tojson(indent=2) }}</pre></details>
+        <details id="campaign-details"><summary>Campaign tags</summary><pre>{{ details.campaign|tojson(indent=2) }}</pre></details>
+        {% if details.ip_info %}<details id="ip-details"><summary>IP lookup response</summary><pre>{{ details.ip_info|tojson(indent=2) }}</pre></details>{% endif %}
+        <details id="event-details"><summary>Original events <span class="muted">{{ events|length }}</span></summary>{% for event in events %}<div class="raw-event"><strong>{{ event.created_at|display_time('clock') }} · {{ event.kind }}</strong><pre>{{ event.payload }}</pre></div>{% else %}<p>No browser events were received.</p>{% endfor %}</details>
+      </section>
+    </div>
+    <aside class="visit-activity">
+      <h2>What happened</h2>
+      <p class="field-help">Latest activity first · UTC</p>
+      <ol class="activity-list">
+        {% for event in overview.timeline[:6] %}
+        <li><time datetime="{{ event.time }}">{{ event.time|display_time('clock') }}</time><strong>{{ event.title }}</strong><p>{{ event.description }}</p></li>
+        {% endfor %}
+      </ol>
+      {% if overview.timeline|length > 6 %}
+      <details id="earlier-activity" class="earlier-activity"><summary>Show {{ overview.timeline|length - 6 }} earlier events</summary>
+        <ol class="activity-list">{% for event in overview.timeline[6:] %}<li><time datetime="{{ event.time }}">{{ event.time|display_time('clock') }}</time><strong>{{ event.title }}</strong><p>{{ event.description }}</p></li>{% endfor %}</ol>
+      </details>
+      {% endif %}
+      {% if group and group.visit_count > 1 %}
+      <section class="related-clicks"><h3>Repeat clicks</h3><p>{{ group.visit_count }} clicks from this IP to the same link in this five-minute group.</p><a class="text-link" href="{{ url_for('visit_group', group_id=group.id) }}">View all clicks in this group</a></section>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+<div class="danger-zone"><form method="post" action="{{ url_for('delete_visit', visit_id=visit.id) }}" data-confirm="Delete this click and its uploaded media? Other clicks in the group will be kept. This cannot be undone."><input type="hidden" name="csrf" value="{{ csrf }}"><button class="button danger" type="submit">Delete this click & media</button></form></div>
+{% endblock %}

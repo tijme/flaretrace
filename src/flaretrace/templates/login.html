@@ -1,0 +1,6 @@
+{# Administrator authentication form. Context: CSRF token and flashed validation errors. #}
+{% extends 'base.html' %}
+{% block title %}Sign in{% endblock %}
+{% block title_suffix %}{% endblock %}
+{% block body_class %}standalone{% endblock %}
+{% block shell %}<main id="main" class="auth-shell"><div class="auth-panel">{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash {{ category }}" role="alert">{{ message }}</div>{% endfor %}{% endwith %}<form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><label for="username">Username</label><input id="username" type="text" name="username" required maxlength="80" autofocus autocomplete="username" value="{{ request.form.get('username', '') }}"><label for="password">Password</label><input id="password" type="password" name="password" required autocomplete="current-password"><button class="button primary full-width" type="submit">Sign in <span aria-hidden="true">↗</span></button></form></div></main>{% endblock %}

@@ -1,0 +1,14 @@
+# Send only package sources and image-build inputs to Docker.
+**
+!pyproject.toml
+!README.md
+!LICENSE.md
+!src/
+!src/**
+!deploy/
+!deploy/Dockerfile
+!deploy/licenses/
+!deploy/licenses/**
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/

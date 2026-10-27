@@ -1,0 +1,14 @@
+# Optional single-container deployment; no checkout, host launcher, or external proxy is required.
+services:
+  flaretrace:
+    image: ${FLARETRACE_IMAGE:-ghcr.io/tijme/flaretrace:latest}
+    restart: unless-stopped
+    stop_grace_period: 15s
+    ports:
+      - "127.0.0.1:8000:80"
+    volumes:
+      - flaretrace-data:/data
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  flaretrace-data:

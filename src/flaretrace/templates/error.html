@@ -1,0 +1,5 @@
+{# Public HTTP error page. Context: status code and safe, non-internal error description. #}
+{% extends 'base.html' %}
+{% block title %}{{ error.code }}{% endblock %}
+{% block body_class %}standalone{% endblock %}
+{% block shell %}<main id="main" class="auth-shell"><a class="brand dark-brand" href="/">Flaretrace</a><div class="auth-panel"><h1>{{ error.code }}</h1><h2>{{ error.name }}</h2><p>{{ error.description }}</p><p>If this is a shared link, ask its owner for a current URL.</p><a class="button secondary" href="/">Go to workspace</a></div></main>{% endblock %}

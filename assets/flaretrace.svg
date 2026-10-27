@@ -1,0 +1,457 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="874.7" height="113" viewBox="59.8 37.1 874.7 113" role="img" aria-labelledby="title description">
+  <title id="title">Flaretrace</title>
+  <desc id="description">Flaretrace in ANSI Shadow ASCII lettering, colored evergreen through teal to blue on a transparent background.</desc>
+  <metadata>Copyright: Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved.
+ Bitstream Vera is a trademark of Bitstream, Inc.
+ DejaVu changes are in public domain.
+License: bitstream-vera
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of the fonts accompanying this license (&quot;Fonts&quot;) and associated
+ documentation files (the &quot;Font Software&quot;), to reproduce and distribute the
+ Font Software, including without limitation the rights to use, copy, merge,
+ publish, distribute, and/or sell copies of the Font Software, and to permit
+ persons to whom the Font Software is furnished to do so, subject to the
+ following conditions:
+ .
+ The above copyright and trademark notices and this permission notice shall
+ be included in all copies of one or more of the Font Software typefaces.
+ .
+ The Font Software may be modified, altered, or added to, and in particular
+ the designs of glyphs or characters in the Fonts may be modified and
+ additional glyphs or characters may be added to the Fonts, only if the fonts
+ are renamed to names not containing either the words &quot;Bitstream&quot; or the word
+ &quot;Vera&quot;.
+ .
+ This License becomes null and void to the extent applicable to Fonts or Font
+ Software that has been modified and is distributed under the &quot;Bitstream
+ Vera&quot; names.
+ .
+ The Font Software may be sold as part of a larger software package but no
+ copy of one or more of the Font Software typefaces may be sold by itself.
+ .
+ THE FONT SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+ TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME
+ FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING
+ ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE
+ FONT SOFTWARE.
+ .
+ Except as contained in this notice, the names of Gnome, the Gnome
+ Foundation, and Bitstream Inc., shall not be used in advertising or
+ otherwise to promote the sale, use or other dealings in this Font Software
+ without prior written authorization from the Gnome Foundation or Bitstream
+ Inc., respectively. For further information, contact: fonts at gnome dot
+ org.
+
+ASCII lettering: ANSI Shadow FIGfont, https://github.com/patorjk/figlet.js/blob/master/fonts/ANSI%20Shadow.flf
+Glyph outlines: DejaVu Sans Mono. No fonts, scripts, or external assets are loaded.
+  </metadata>
+  <defs>
+    <linearGradient id="color" x1="60" y1="0" x2="940" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2b6047"/>
+      <stop offset=".5" stop-color="#167665"/>
+      <stop offset="1" stop-color="#305f9c"/>
+    </linearGradient>
+    <path id="g0" d="M-20 790V962H1253V790ZM-20 446V618H1253V446Z"/>
+    <path id="g1" d="M376 -512V1921H536V-512ZM696 -512V1921H856V-512Z"/>
+    <path id="g2" d="M376 -512V962H1253V790H536V-512ZM696 -512V618H1253V446H856V-512Z"/>
+    <path id="g3" d="M696 -512V790H-20V962H856V-512ZM376 -512V446H-20V618H536V-512Z"/>
+    <path id="g4" d="M696 790V1921H856V962H1253V790ZM376 446V1921H536V618H1253V446Z"/>
+    <path id="g5" d="M-20 790V962H376V1921H536V790ZM-20 446V618H696V1921H856V446Z"/>
+    <path id="g6" d="M-20 -512V1921H1253V-512Z"/>
+    <mask id="lettering" x="0" y="0" width="1000" height="200" maskUnits="userSpaceOnUse">
+      <g fill="white">
+      <use href="#g6" transform="translate(60.000 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(70.837 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(81.674 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(92.511 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(103.348 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(114.185 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(125.021 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(135.858 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(146.695 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(157.532 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(168.369 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(244.228 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(255.064 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(265.901 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(276.738 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(287.575 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(298.412 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(320.086 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(330.923 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(341.760 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(352.597 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(363.434 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(374.271 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(385.107 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(406.781 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(417.618 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(428.455 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(439.292 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(450.129 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(460.966 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(471.803 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(482.640 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(493.477 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(504.313 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(515.150 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(525.987 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(536.824 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(547.661 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(558.498 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(569.335 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(580.172 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(591.009 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(601.846 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(612.683 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(623.520 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(634.356 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(645.193 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(656.030 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(688.541 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(699.378 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(710.215 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(721.052 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(731.889 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(742.726 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(775.236 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(786.073 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(796.910 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(807.747 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(818.584 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(829.421 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(840.258 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(851.095 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(861.932 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(872.769 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(883.605 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(894.442 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(905.279 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(916.116 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(926.953 54) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(60.000 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(70.837 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(81.674 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(92.511 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(103.348 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(114.185 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(125.021 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(135.858 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(146.695 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(157.532 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(168.369 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(233.391 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(244.228 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(255.064 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(265.901 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(276.738 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(287.575 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(298.412 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(309.249 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(320.086 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(330.923 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(341.760 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(352.597 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(363.434 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(374.271 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(385.107 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(395.944 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(406.781 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(417.618 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(428.455 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(439.292 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(450.129 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(460.966 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(471.803 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(482.640 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(493.477 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(504.313 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(515.150 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(525.987 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(536.824 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(547.661 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(558.498 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(569.335 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(580.172 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(591.009 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(601.846 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(612.683 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(623.520 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(634.356 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(645.193 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(656.030 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(666.867 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(677.704 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(688.541 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(699.378 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(710.215 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(721.052 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(731.889 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(742.726 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(753.562 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(764.399 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(775.236 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(786.073 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(796.910 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(807.747 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(818.584 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(829.421 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(840.258 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(851.095 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(861.932 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(872.769 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(883.605 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(894.442 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(905.279 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(916.116 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(926.953 74) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(60.000 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(70.837 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(81.674 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(92.511 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(103.348 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(114.185 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(146.695 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(157.532 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(168.369 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(233.391 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(244.228 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(255.064 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(265.901 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(276.738 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(287.575 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(298.412 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(309.249 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(320.086 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(330.923 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(341.760 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(352.597 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(363.434 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(374.271 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(385.107 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(395.944 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(406.781 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(417.618 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(428.455 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(439.292 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(450.129 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(460.966 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(525.987 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(536.824 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(547.661 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(591.009 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(601.846 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(612.683 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(623.520 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(634.356 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(645.193 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(656.030 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(666.867 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(677.704 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(688.541 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(699.378 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(710.215 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(721.052 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(731.889 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(742.726 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(753.562 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(764.399 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(775.236 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(786.073 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(851.095 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(861.932 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(872.769 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(883.605 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(894.442 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(905.279 94) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(60.000 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(70.837 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(81.674 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(92.511 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(103.348 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(114.185 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(146.695 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(157.532 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(168.369 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(233.391 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(244.228 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(255.064 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(265.901 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(276.738 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(287.575 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(298.412 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(309.249 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(320.086 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(330.923 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(341.760 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(352.597 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(363.434 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(374.271 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(385.107 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(395.944 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(406.781 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(417.618 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(428.455 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(439.292 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(450.129 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(460.966 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(525.987 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(536.824 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(547.661 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(591.009 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(601.846 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(612.683 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(623.520 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(634.356 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(645.193 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(656.030 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(666.867 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(677.704 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(688.541 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(699.378 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(710.215 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(721.052 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(731.889 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(742.726 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(753.562 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(764.399 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(775.236 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(786.073 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(851.095 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(861.932 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g2" transform="translate(872.769 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(883.605 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(894.442 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(905.279 114) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(60.000 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(70.837 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(81.674 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(146.695 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(157.532 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(168.369 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(179.206 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(190.043 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(200.880 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(211.717 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(222.554 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(233.391 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(244.228 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(255.064 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(287.575 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(298.412 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(309.249 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(320.086 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(330.923 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(341.760 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(374.271 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(385.107 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(395.944 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(406.781 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(417.618 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(428.455 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(439.292 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(450.129 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(460.966 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(471.803 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(482.640 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(525.987 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(536.824 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(547.661 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(591.009 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(601.846 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(612.683 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(645.193 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(656.030 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(666.867 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(677.704 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(688.541 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(699.378 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(731.889 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(742.726 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g1" transform="translate(753.562 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(764.399 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(775.236 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(786.073 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(796.910 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(807.747 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(818.584 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(829.421 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(840.258 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(851.095 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(861.932 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(872.769 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(883.605 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(894.442 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(905.279 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g6" transform="translate(916.116 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g3" transform="translate(926.953 134) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(60.000 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(70.837 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(81.674 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(146.695 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(157.532 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(168.369 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(179.206 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(190.043 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(200.880 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(211.717 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(222.554 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(233.391 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(244.228 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(255.064 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(287.575 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(298.412 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(309.249 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(320.086 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(330.923 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(341.760 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(374.271 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(385.107 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(395.944 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(406.781 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(417.618 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(428.455 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(439.292 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(450.129 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(460.966 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(471.803 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(482.640 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(525.987 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(536.824 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(547.661 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(591.009 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(601.846 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(612.683 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(645.193 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(656.030 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(666.867 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(677.704 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(688.541 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(699.378 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(731.889 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(742.726 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(753.562 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(775.236 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(786.073 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(796.910 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(807.747 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(818.584 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(829.421 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(840.258 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g4" transform="translate(851.095 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(861.932 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(872.769 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(883.605 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(894.442 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(905.279 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g0" transform="translate(916.116 154) scale(0.008789062 -0.008789062)"/>
+      <use href="#g5" transform="translate(926.953 154) scale(0.008789062 -0.008789062)"/>
+      </g>
+    </mask>
+  </defs>
+  <path fill="url(#color)" mask="url(#lettering)" d="M0 0h1000v200H0z"/>
+</svg>

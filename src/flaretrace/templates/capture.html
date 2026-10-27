@@ -1,0 +1,3 @@
+{# Authored HTML followed by the capture runtime. Context: template_source, capture_config, and preview_only. #}
+{{- template_source|default(default_template, true)|safe }}
+<script src="{{ url_for('static', filename='capture.js', _external=True) }}" defer data-flaretrace-runtime data-preview="{{ 'true' if preview_only else 'false' }}"{% if not preview_only %} data-config="{{ capture_config|tojson|forceescape }}"{% endif %}></script>

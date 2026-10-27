@@ -1,0 +1,13 @@
+{# Required homepage-redirect form. Context: csrf and flashed validation errors. #}
+{% extends 'base.html' %}
+{% block title %}Initial setup{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Initial setup</h1><p>Complete the required settings before using Flaretrace.</p></div></div>
+<form class="panel form-panel" method="post">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <label for="homepage-redirect">Homepage redirect URL (required)</label>
+  <input id="homepage-redirect" name="homepage_redirect" type="url" required autofocus placeholder="https://example.com" value="{{ request.form.get('homepage_redirect','') }}">
+  <p class="field-help">Visitors opening / will be redirected here. Flaretrace remains available at /admin.</p>
+  <button class="button primary" type="submit">Save and continue</button>
+</form>
+{% endblock %}

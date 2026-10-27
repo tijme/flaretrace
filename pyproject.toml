@@ -1,0 +1,59 @@
+# Define package metadata, runtime dependencies, test suites, and coverage gates.
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flaretrace"
+version = "0.1.0"
+description = "Self-hosted tracking links for IP logging, GPS collection, camera captures, and browser insights."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "GPL-3.0-only"
+license-files = ["LICENSE.md"]
+authors = [{name = "Tijme Gommers"}]
+dependencies = [
+    "Flask==3.1.2",
+    "gunicorn==23.0.0",
+]
+
+[project.scripts]
+flaretrace = "flaretrace.runtime.cli:main"
+manage = "flaretrace.runtime.cli:main"
+
+[project.optional-dependencies]
+test = ["pytest>=8.4,<10", "pytest-cov>=7,<8", "pytest-timeout>=2.4,<3"]
+browser = ["playwright==1.64.1", "Pillow>=11,<13"]
+
+[project.urls]
+Repository = "https://github.com/tijme/flaretrace"
+Issues = "https://github.com/tijme/flaretrace/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+flaretrace = ["templates/*.html", "landing_templates/*.html", "static/*.css", "static/*.js", "static/*.svg", "static/fonts/*"]
+"flaretrace.database" = ["*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/integration"]
+addopts = "-ra --strict-config --strict-markers"
+timeout = 90
+markers = ["ui: browser-based end-to-end scenarios"]
+filterwarnings = ["ignore:unclosed database:ResourceWarning"]
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["flaretrace"]
+relative_files = true
+patch = ["subprocess"]
+sigterm = true
+
+[tool.coverage.report]
+fail_under = 90
+precision = 2
+show_missing = true
+
+[tool.coverage.paths]
+source = ["src/flaretrace", "*/site-packages/flaretrace", "*/dist-packages/flaretrace"]

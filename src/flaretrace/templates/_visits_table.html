@@ -1,0 +1,27 @@
+{# Reusable click-group table. Context: groups, link display options, and live-region identifiers. #}
+<div class="table-scroll">
+<table class="visits-table">
+  <thead><tr><th>Latest click · UTC</th>{% if show_link %}<th>Link</th>{% endif %}<th>IP address</th><th>Sharing</th><th>Location</th><th>Files</th><th><span class="sr-only">Open clicks</span></th></tr></thead>
+  <tbody>
+  {% for group in groups %}
+    <tr class="visit-group-row" data-group-row="{{ group.id }}" {% if group.visit_count > 1 %}data-expand-group="{{ group.id }}" tabindex="0" aria-label="Expand {{ group.visit_count }} clicks from {{ group.ip }}"{% else %}data-href="{{ url_for('visit_detail', visit_id=group.latest_visit_id) }}" aria-label="Open click {{ group.latest_visit_id[:8] }}"{% endif %}>
+      <td class="visit-leading"><span class="mono">{{ group.last_at|display_time('date') }}</span><span class="subtext mono">{{ group.last_at|display_time('clock') }}{% if group.visit_count > 1 %} · since {{ group.started_at|display_time('clock') }}{% endif %}</span><span class="group-mobile-ip mono">{{ group.ip or 'Unknown IP' }}</span>{% if group.visit_count > 1 %}<button class="group-toggle" id="toggle-{{ group.id }}" type="button" data-group-toggle="{{ group.id }}" aria-expanded="false" aria-controls="clicks-{{ group.id }}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6"/></svg><span>{{ group.visit_count }} clicks</span></button>{% endif %}</td>
+      {% if show_link %}<td>{{ group.link_name }}</td>{% endif %}
+      <td class="mono">{{ group.ip or 'Unknown IP' }}</td>
+      <td><span class="status {{ 'green' if group.sharing_count else 'neutral' }}">{{ group.sharing_count|string + ' started' if group.sharing_count else 'Request only' }}</span></td>
+      <td>{{ group.location_count|string + ' received' if group.location_count else '—' }}</td><td>{{ group.media_count }}</td>
+      <td>{% if group.visit_count > 1 %}<a class="text-link" href="{{ url_for('visit_group', group_id=group.id) }}">View clicks</a>{% else %}<a class="text-link" href="{{ url_for('visit_detail', visit_id=group.latest_visit_id) }}">Inspect</a>{% endif %}</td>
+    </tr>
+    {% if group.visit_count > 1 %}<tr class="group-children" id="clicks-{{ group.id }}" hidden>
+      <td colspan="{{ 7 if show_link else 6 }}">
+        <div data-group-body="{{ group.id }}" data-group-url="{{ url_for('visit_group', group_id=group.id) }}" data-version="{{ group.visit_count }}:{{ group.sharing_count }}:{{ group.closed_count }}:{{ group.location_count }}:{{ group.media_count }}">
+          <p class="group-loading" role="status">Loading clicks…</p>
+        </div>
+      </td>
+    </tr>{% endif %}
+  {% else %}
+    <tr><td class="table-empty" colspan="{{ 7 if show_link else 6 }}">No visits yet. Incoming clicks will appear here.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
