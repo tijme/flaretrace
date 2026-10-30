@@ -35,11 +35,36 @@ def visits_page():
         Flask-compatible page, redirect, file response, or validation error for this route.
     """
     hide_bots = request.args.get("bots") == "hide"
+    try:
+        groups, has_more = list_groups(
+            get_database(), hide_bots=hide_bots, before=request.args.get("before")
+        )
+    except ValueError:
+        abort(400)
+    next_url = next_groups_url("visits_page", groups, has_more, hide_bots)
     return render_template(
-        "visits.html",
-        groups=list_groups(get_database(), hide_bots=hide_bots),
-        hide_bots=hide_bots,
+        "visits.html", groups=groups, hide_bots=hide_bots, next_url=next_url
     )
+
+
+def next_groups_url(endpoint, groups, has_more, hide_bots, **url_kwargs):
+    """Build the 'load older groups' URL for the current filter state, if more exist.
+
+    Args:
+        endpoint: Flask endpoint name for the current groups-listing page.
+        groups: Groups already selected for the current page.
+        has_more: Whether another, older page of groups exists beyond this one.
+        hide_bots: Whether the current page already filters out bot-only groups.
+        url_kwargs: Additional path arguments required by the endpoint, such as slug.
+
+    Returns:
+        Absolute path to the next page, or None when there is nothing more to load.
+    """
+    if not has_more:
+        return None
+    if hide_bots:
+        return url_for(endpoint, before=groups[-1]["id"], bots="hide", **url_kwargs)
+    return url_for(endpoint, before=groups[-1]["id"], **url_kwargs)
 
 
 @admin_only
@@ -259,7 +284,9 @@ def export():
         An optional link query parameter filters records without grouping them.
     """
     where, parameters = export_filter(
-        request.args.get("link"), request.args.get("campaign")
+        request.args.get("link"),
+        request.args.get("campaign"),
+        request.args.get("bots") == "hide",
     )
     visits = (
         get_database()

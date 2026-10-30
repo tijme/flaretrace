@@ -15,6 +15,7 @@ from flaretrace.security import admin_only
 from flaretrace.links.qrcode import link_qr_svg
 from flaretrace.links.repository import get_link, parse_max_visits, valid_slug, public_url
 from flaretrace.visits.records import remove_visits
+from flaretrace.routes.visits import next_groups_url
 
 
 @admin_only
@@ -131,11 +132,22 @@ def link_detail(slug):
     """
     link = get_link(slug)
     hide_bots = request.args.get("bots") == "hide"
+    try:
+        groups, has_more = list_groups(
+            get_database(),
+            slug,
+            hide_bots=hide_bots,
+            before=request.args.get("before"),
+        )
+    except ValueError:
+        abort(400)
+    next_url = next_groups_url("link_detail", groups, has_more, hide_bots, slug=slug)
     return render_template(
         "link_detail.html",
         link=link,
-        groups=list_groups(get_database(), slug, hide_bots=hide_bots),
+        groups=groups,
         hide_bots=hide_bots,
+        next_url=next_url,
         public_url=public_url(slug),
         campaigns=list_campaigns(get_database()),
         visit_count=get_database()

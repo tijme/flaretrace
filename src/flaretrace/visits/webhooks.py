@@ -7,6 +7,18 @@ import hmac
 import json
 import urllib.request
 
+from flaretrace.utilities import now
+
+
+def build_test_payload():
+    """Build the notification body used to verify a configured webhook endpoint.
+
+    Returns:
+        JSON-serializable mapping identifying this as a manual connectivity test,
+        distinct from a real visit.created notification.
+    """
+    return {"event": "webhook.test", "sent_at": now()}
+
 
 def build_webhook_payload(link, visit_id, created_at):
     """Build the bounded, JSON-serializable notification body for one visit.

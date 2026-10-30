@@ -8,11 +8,19 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from flaretrace.visits.webhooks import (
+    build_test_payload,
     build_webhook_payload,
     dispatch_webhook,
     send_webhook,
     sign_payload,
 )
+
+
+def test_test_payload_identifies_itself_as_a_manual_test():
+    """Build a distinct, bounded body that is never confused with a real visit event."""
+    payload = build_test_payload()
+    assert payload["event"] == "webhook.test"
+    assert set(payload) == {"event", "sent_at"}
 
 
 def test_payload_contains_only_bounded_link_and_visit_identifiers():

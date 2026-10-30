@@ -1,6 +1,7 @@
 """Exercise visit limits, bot filtering, campaigns, visit notes, QR codes, and webhooks."""
 
 import json
+import re
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -147,6 +148,131 @@ def test_new_campaign_form_renders_and_rejects_a_blank_name(client, csrf):
     assert client.get("/admin/campaigns/new").status_code == 200
     rejected = client.post("/admin/campaigns/new", data={"csrf": csrf, "name": "  "})
     assert rejected.status_code == 400
+
+
+def seed_groups(database, link, count):
+    """Insert `count` distinct single-click groups directly, oldest index first.
+
+    Args:
+        database: SQLite connection to the current test installation.
+        link: Research-link identifier that owns every seeded group.
+        count: Number of distinct groups and visits to insert.
+    """
+    for index in range(count):
+        group_id = f"group-{index:04d}"
+        timestamp = f"2026-01-01T{index // 3600:02d}:{index // 60 % 60:02d}:{index % 60:02d}+00:00"
+        database.execute(
+            "INSERT INTO visit_groups(id,link_id,ip,started_at,last_at) VALUES(?,?,?,?,?)",
+            (group_id, link, f"203.0.113.{index % 250}", timestamp, timestamp),
+        )
+        database.execute(
+            "INSERT INTO visits(id,link_id,created_at,ip,method,user_agent,referrer,"
+            "headers,campaign,group_id) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            (
+                f"visit-{index:04d}",
+                link,
+                timestamp,
+                f"203.0.113.{index % 250}",
+                "GET",
+                "ua",
+                "",
+                "{}",
+                "{}",
+                group_id,
+            ),
+        )
+    database.commit()
+
+
+def test_visits_page_offers_load_older_past_the_first_page(client, make_link, database):
+    """Show a 'Load older visits' link, and reach the remaining groups through it.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+        database: SQLite connection to the current test installation.
+    """
+    link = make_link()
+    seed_groups(database, link, 260)
+    first_page = client.get("/admin/visits")
+    assert first_page.status_code == 200
+    assert b'class="group-pagination"' in first_page.data
+    assert b"group-0000" not in first_page.data
+    match = re.search(rb'href="(/admin/visits\?before=[^"]+)"', first_page.data)
+    assert match
+    next_href = match.group(1).decode().replace("&amp;", "&")
+    second_page = client.get(next_href)
+    assert second_page.status_code == 200
+    assert b"group-0000" in second_page.data
+    assert b'class="group-pagination"' not in second_page.data
+
+
+def test_load_older_link_preserves_an_active_bot_filter(client, make_link, database):
+    """Carry the bots=hide filter through the 'load older' pagination link.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+        database: SQLite connection to the current test installation.
+    """
+    link = make_link()
+    seed_groups(database, link, 260)
+    page = client.get("/admin/visits?bots=hide")
+    assert page.status_code == 200
+    match = re.search(rb'href="(/admin/visits\?before=[^"]+&amp;bots=hide)"', page.data)
+    assert match
+    next_href = match.group(1).decode().replace("&amp;", "&")
+    second_page = client.get(next_href)
+    assert second_page.status_code == 200
+    assert b"group-0000" in second_page.data
+
+
+def test_visits_page_rejects_a_cursor_outside_its_scope(client, make_link):
+    """Reject a pagination cursor that does not belong to the current listing.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+    """
+    make_link()
+    assert client.get("/admin/visits?before=does-not-exist").status_code == 400
+
+
+def test_link_detail_pagination_cursor_is_scoped_to_its_own_link(
+    client, make_link, database
+):
+    """Reject a pagination cursor from one link when browsing a different link.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+        database: SQLite connection to the current test installation.
+    """
+    first_link = make_link()
+    second_link = make_link()
+    seed_groups(database, first_link, 1)
+    result = client.get(f"/admin/links/{second_link}?before=group-0000")
+    assert result.status_code == 400
+
+
+def test_export_bots_hide_excludes_automated_visits(client, make_link):
+    """The bots=hide filter is also honored by the CSV/JSON export, not only the page.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+    """
+    link = make_link()
+    client.get(f"/l/{link}", headers={"User-Agent": BOT_AGENT})
+    client.get(f"/l/{link}", headers={"User-Agent": NORMAL_AGENT})
+    everything = client.get("/admin/export").json
+    assert len(everything) == 2
+    filtered = client.get("/admin/export?bots=hide").json
+    assert len(filtered) == 1
+    assert filtered[0]["is_bot"] == 0
+    csv_filtered = client.get("/admin/export?bots=hide&format=csv").text
+    assert BOT_AGENT not in csv_filtered
+    assert NORMAL_AGENT in csv_filtered
 
 
 def test_create_campaign_and_assign_a_link_to_it(client, csrf, make_link, database):
@@ -415,6 +541,73 @@ def test_webhook_delivery_failure_never_breaks_the_capture_page(
     ):
         result = client.get(f"/l/{link}")
     assert result.status_code == 200
+
+
+def test_test_webhook_requires_a_configured_url_first(client, csrf):
+    """Reject a test send when no webhook URL has been configured yet.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        csrf: Session-bound token required by administrator POST forms.
+    """
+    with patch("flaretrace.visits.webhooks.urllib.request.urlopen") as opener:
+        result = client.post("/admin/setup/webhook/test", data={"csrf": csrf})
+    assert result.status_code == 302
+    opener.assert_not_called()
+
+
+def test_test_webhook_delivers_a_distinct_test_payload(client, csrf, database):
+    """Send exactly one signed webhook.test payload to the configured endpoint.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        csrf: Session-bound token required by administrator POST forms.
+        database: SQLite connection to the current test installation.
+    """
+    client.post(
+        "/admin/setup/webhook",
+        data={"csrf": csrf, "webhook_url": "https://hooks.example.com/notify"},
+    )
+    secret = database.execute(
+        "SELECT value FROM settings WHERE key='webhook_secret'"
+    ).fetchone()["value"]
+    response = MagicMock()
+    response.__enter__.return_value.status = 200
+    with patch(
+        "flaretrace.visits.webhooks.urllib.request.urlopen", return_value=response
+    ) as opener:
+        result = client.post("/admin/setup/webhook/test", data={"csrf": csrf})
+    assert result.status_code == 302
+    opener.assert_called_once()
+    sent = opener.call_args.args[0]
+    body = sent.data
+    assert json.loads(body)["event"] == "webhook.test"
+    assert sent.get_header("X-flaretrace-signature") == sign_payload(secret, body)
+    follow_up = client.get("/admin/setup")
+    assert b"Test webhook delivered successfully" in follow_up.data
+
+
+def test_test_webhook_surfaces_a_delivery_failure_to_the_administrator(
+    client, csrf
+):
+    """Show the administrator why a test delivery failed instead of hiding it.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        csrf: Session-bound token required by administrator POST forms.
+    """
+    client.post(
+        "/admin/setup/webhook",
+        data={"csrf": csrf, "webhook_url": "https://hooks.example.com/notify"},
+    )
+    with patch(
+        "flaretrace.visits.webhooks.urllib.request.urlopen",
+        side_effect=OSError("Name or service not known"),
+    ):
+        client.post("/admin/setup/webhook/test", data={"csrf": csrf})
+    follow_up = client.get("/admin/setup")
+    assert b"Test webhook failed" in follow_up.data
+    assert b"Name or service not known" in follow_up.data
 
 
 def test_invalid_webhook_url_is_rejected_and_disabling_clears_it(client, csrf, database):

@@ -99,7 +99,7 @@ def migrate_groups(connection):
             raise
 
 
-def list_groups(connection, link_id=None, limit=250, hide_bots=False):
+def list_groups(connection, link_id=None, limit=250, hide_bots=False, before=None):
     """Read recent click groups and their evidence counts for the administrator.
 
     Args:
@@ -107,19 +107,25 @@ def list_groups(connection, link_id=None, limit=250, hide_bots=False):
         link_id: Research-link identifier, or None when querying all links.
         limit: Maximum number of records or requests accepted for this operation.
         hide_bots: Whether to exclude groups whose every click was flagged as automated.
+        before: Optional group identifier used as an exclusive pagination cursor.
 
     Returns:
-        Recent SQLite rows with link names and aggregate evidence counts, including
-        each group's bot_count alongside its other evidence counts.
+        Up to `limit` groups (newest first) with link names and aggregate evidence
+        counts, and whether another, older page exists beyond this one.
+
+    Raises:
+        ValueError: The supplied cursor does not belong to the requested scope.
     """
     conditions, parameters = (["g.link_id=?"], [link_id]) if link_id else ([], [])
     if hide_bots:
         conditions.append(
             "EXISTS (SELECT 1 FROM visits v WHERE v.group_id=g.id AND v.is_bot=0)"
         )
+    if before:
+        conditions.append(cursor_condition(connection, link_id, before, parameters))
     where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
-    parameters.append(limit)
-    return connection.execute(
+    parameters.append(limit + 1)
+    rows = connection.execute(
         f"""
         WITH recent AS (
             SELECT g.*,g.rowid AS sequence FROM visit_groups g {where}
@@ -138,6 +144,33 @@ def list_groups(connection, link_id=None, limit=250, hide_bots=False):
     """,
         parameters,
     ).fetchall()
+    return rows[:limit], len(rows) > limit
+
+
+def cursor_condition(connection, link_id, before, parameters):
+    """Resolve a group-identifier cursor to its SQL ordering condition in place.
+
+    Args:
+        connection: Open SQLite connection with row access; the caller owns its lifetime.
+        link_id: Research-link identifier the cursor must belong to, or None for any.
+        before: Group identifier used as an exclusive pagination cursor.
+        parameters: Query parameter list; the cursor's ordering values are appended.
+
+    Returns:
+        SQL condition excluding groups at or newer than the cursor's position.
+
+    Raises:
+        ValueError: The supplied cursor does not belong to the requested scope.
+    """
+    scope = "AND link_id=?" if link_id else ""
+    cursor = connection.execute(
+        f"SELECT last_at,rowid FROM visit_groups WHERE id=? {scope}",
+        (before, link_id) if link_id else (before,),
+    ).fetchone()
+    if cursor is None:
+        raise ValueError("Pagination cursor does not belong to this scope.")
+    parameters.extend((cursor["last_at"], cursor["rowid"]))
+    return "(g.last_at,g.rowid)<(?,?)"
 
 
 def group_visits(connection, group_id, before=None):

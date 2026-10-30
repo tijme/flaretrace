@@ -21,3 +21,22 @@ def test_campaign_filter_selects_links_belonging_to_that_campaign():
     where, parameters = export_filter(None, "campaign-1")
     assert where == " WHERE link_id IN (SELECT id FROM links WHERE campaign_id=?)"
     assert parameters == ("campaign-1",)
+
+
+def test_hide_bots_alone_adds_an_is_bot_condition():
+    """Build an is_bot=0 condition when only the bot filter is requested."""
+    where, parameters = export_filter(None, None, hide_bots=True)
+    assert where == " WHERE is_bot=0"
+    assert parameters == ()
+
+
+def test_hide_bots_combines_with_a_link_or_campaign_filter():
+    """Combine the bot filter with a link or campaign filter using AND."""
+    where, parameters = export_filter("link-1", None, hide_bots=True)
+    assert where == " WHERE link_id=? AND is_bot=0"
+    assert parameters == ("link-1",)
+    where, parameters = export_filter(None, "campaign-1", hide_bots=True)
+    assert where == (
+        " WHERE link_id IN (SELECT id FROM links WHERE campaign_id=?) AND is_bot=0"
+    )
+    assert parameters == ("campaign-1",)

@@ -9,6 +9,7 @@ from flask import current_app, flash, redirect, render_template, request, url_fo
 from flaretrace.utilities import valid_destination
 from flaretrace.database.connection import get_database
 from flaretrace.security import admin_only
+from flaretrace.visits.webhooks import build_test_payload, send_webhook
 
 
 @admin_only
@@ -111,9 +112,35 @@ def update_webhook():
     return redirect(url_for("setup"))
 
 
+@admin_only
+def test_webhook():
+    """Send an immediate test notification to the currently configured webhook.
+
+    Returns:
+        Flask-compatible page, redirect, file response, or validation error for this route.
+    """
+    webhook = {
+        row["key"]: row["value"]
+        for row in get_database().execute(
+            "SELECT key,value FROM settings WHERE key IN ('webhook_url','webhook_secret')"
+        )
+    }
+    url = webhook.get("webhook_url", "")
+    if not url:
+        flash("Configure a webhook URL first.", "error")
+        return redirect(url_for("setup"))
+    try:
+        send_webhook(url, webhook.get("webhook_secret", ""), build_test_payload())
+        flash("Test webhook delivered successfully.", "success")
+    except (OSError, ValueError) as error:
+        flash(f"Test webhook failed: {error}", "error")
+    return redirect(url_for("setup"))
+
+
 #: Paths, stable endpoint names, and accepted HTTP methods for this feature.
 ROUTES = [
     ["/admin/initial-setup", "setup_required", ["GET", "POST"]],
     ["/admin/setup", "setup", ["GET", "POST"]],
     ["/admin/setup/webhook", "update_webhook", ["POST"]],
+    ["/admin/setup/webhook/test", "test_webhook", ["POST"]],
 ]
