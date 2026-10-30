@@ -1,6 +1,15 @@
 """Register HTTP handlers without adding prefixes to established endpoint names."""
 
-from . import authentication, capture, links, settings, system, templates, visits
+from . import (
+    authentication,
+    campaigns,
+    capture,
+    links,
+    settings,
+    system,
+    templates,
+    visits,
+)
 
 
 def register_routes(application):
@@ -9,7 +18,16 @@ def register_routes(application):
     Args:
         application: Flask application receiving its HTTP route table.
     """
-    for module in (authentication, capture, links, settings, system, templates, visits):
+    for module in (
+        authentication,
+        campaigns,
+        capture,
+        links,
+        settings,
+        system,
+        templates,
+        visits,
+    ):
         for path, handler_name, methods in module.ROUTES:
             application.add_url_rule(
                 path, view_func=getattr(module, handler_name), methods=methods

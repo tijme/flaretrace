@@ -7,7 +7,7 @@
       <tbody data-click-rows>
       {% for visit in visits %}
         <tr data-href="{{ url_for('visit_detail', visit_id=visit.id) }}" data-click-id="{{ visit.id }}" aria-label="Open click {{ visit.id[:8] }}">
-          <td><a class="row-link mono" href="{{ url_for('visit_detail', visit_id=visit.id) }}">{{ visit.created_at|display_time('clock') }}</a><span class="subtext mono">{{ visit.id[:8] }}</span></td>
+          <td><a class="row-link mono" href="{{ url_for('visit_detail', visit_id=visit.id) }}">{{ visit.created_at|display_time('clock') }}</a><span class="subtext mono">{{ visit.id[:8] }}{% if visit.is_bot %} · Automated{% endif %}</span></td>
           <td>{{ 'Started' if visit.interacted else 'Not started' }}</td>
           <td>{{ 'Received' if visit.location else '—' }}</td>
           <td>{{ visit.media_count }}</td>

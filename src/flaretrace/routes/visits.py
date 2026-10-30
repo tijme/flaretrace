@@ -24,7 +24,7 @@ from flaretrace.limits import limited
 from flaretrace.security import admin_only
 from flaretrace.visits.records import remove_visits
 from flaretrace.visits.enrichment import lookup_ip_information
-from flaretrace.visits.exports import csv_export, json_export
+from flaretrace.visits.exports import csv_export, export_filter, json_export
 
 
 @admin_only
@@ -34,7 +34,12 @@ def visits_page():
     Returns:
         Flask-compatible page, redirect, file response, or validation error for this route.
     """
-    return render_template("visits.html", groups=list_groups(get_database()))
+    hide_bots = request.args.get("bots") == "hide"
+    return render_template(
+        "visits.html",
+        groups=list_groups(get_database(), hide_bots=hide_bots),
+        hide_bots=hide_bots,
+    )
 
 
 @admin_only
@@ -186,6 +191,27 @@ def enrich_visit(visit_id):
 
 
 @admin_only
+def update_note(visit_id):
+    """Save an administrator-authored note on one visit.
+
+    Args:
+        visit_id: Stored visit identifier used to join events, groups, and media.
+
+    Returns:
+        Flask-compatible page, redirect, file response, or validation error for this route.
+    """
+    note = request.form.get("note", "").strip()[:2000]
+    cursor = get_database().execute(
+        "UPDATE visits SET note=? WHERE id=?", (note, visit_id)
+    )
+    if cursor.rowcount == 0:
+        abort(404)
+    get_database().commit()
+    flash("Note saved.", "success")
+    return redirect(url_for("visit_detail", visit_id=visit_id))
+
+
+@admin_only
 def delete_visit(visit_id):
     """Remove one visit and its evidence while maintaining group counts.
 
@@ -232,14 +258,14 @@ def export():
         CSV response when format=csv; otherwise JSON with events and media metadata.
         An optional link query parameter filters records without grouping them.
     """
-    link_id = request.args.get("link")
+    where, parameters = export_filter(
+        request.args.get("link"), request.args.get("campaign")
+    )
     visits = (
         get_database()
         .execute(
-            "SELECT * FROM visits"
-            + (" WHERE link_id=?" if link_id else "")
-            + " ORDER BY created_at DESC,rowid DESC",
-            (link_id,) if link_id else (),
+            "SELECT * FROM visits" + where + " ORDER BY created_at DESC,rowid DESC",
+            parameters,
         )
         .fetchall()
     )
@@ -264,6 +290,7 @@ ROUTES = [
     ["/admin/visit-groups/<group_id>", "visit_group", ["GET"]],
     ["/admin/visits/<visit_id>", "visit_detail", ["GET"]],
     ["/admin/visits/<visit_id>/enrich", "enrich_visit", ["POST"]],
+    ["/admin/visits/<visit_id>/note", "update_note", ["POST"]],
     ["/admin/visits/<visit_id>/delete", "delete_visit", ["POST"]],
     ["/admin/media/<media_id>", "media_file", ["GET"]],
     ["/admin/export", "export", ["GET"]],

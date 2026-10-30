@@ -1,8 +1,8 @@
-{# Cross-link click-group overview. Context: groups ordered by latest recorded click. #}
+{# Cross-link click-group overview. Context: groups ordered by latest recorded click, hide_bots filter. #}
 {% extends 'base.html' %}
 {% block title %}Visits{% endblock %}
 {% block content %}
-<div class="page-heading"><div><h1>Visits</h1><p>Request records and capture data.</p></div><div class="inline-actions"><a class="button secondary" href="{{ url_for('export', format='csv') }}">Export CSV</a><a class="button secondary" href="{{ url_for('export') }}">Export JSON</a></div></div>
+<div class="page-heading"><div><h1>Visits</h1><p>Request records and capture data.</p></div><div class="inline-actions">{% if hide_bots %}<a class="button secondary" href="{{ url_for('visits_page') }}">Show automated requests</a>{% else %}<a class="button secondary" href="{{ url_for('visits_page', bots='hide') }}">Hide automated requests</a>{% endif %}<a class="button secondary" href="{{ url_for('export', format='csv') }}">Export CSV</a><a class="button secondary" href="{{ url_for('export') }}">Export JSON</a></div></div>
 {% include '_live_status.html' %}
 <section id="visit-list" class="panel" data-live-region>{% set show_link = true %}{% include '_visits_table.html' %}</section><p class="field-help">Latest 250 groups, newest first. Repeat clicks from the same IP to the same link are grouped within five minutes. Expand a group to inspect individual clicks. Exports include every click.</p>
 {% endblock %}

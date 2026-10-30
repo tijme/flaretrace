@@ -11,6 +11,7 @@ from flask import abort, current_app, g, render_template, request
 from flaretrace.utilities import now, safe_referrer
 from flaretrace.database.connection import get_database
 from flaretrace.links.templates import DEFAULT_TEMPLATE, validate_template
+from flaretrace.visits.botcheck import looks_like_bot
 from flaretrace.visits.groups import assign_group
 from flaretrace.state import authentication, media_directory
 from flaretrace.limits import limited
@@ -19,6 +20,30 @@ from flaretrace.links.repository import get_public_link
 from flaretrace.visits.records import add_event
 from flaretrace.visits.events import event_envelope, validate_event
 from flaretrace.visits.uploads import save_media
+from flaretrace.visits.webhooks import dispatch_webhook
+
+
+def notify_webhook(link, visit_id, created_at):
+    """Best-effort notify the administrator-configured webhook that a link opened.
+
+    Args:
+        link: Stored link row that was just opened.
+        visit_id: Newly created visit identifier.
+        created_at: Visit creation timestamp in ISO 8601 UTC format.
+    """
+    settings = {
+        row["key"]: row["value"]
+        for row in get_database().execute(
+            "SELECT key,value FROM settings WHERE key IN ('webhook_url','webhook_secret')"
+        )
+    }
+    dispatch_webhook(
+        settings.get("webhook_url", ""),
+        settings.get("webhook_secret", ""),
+        link,
+        visit_id,
+        created_at,
+    )
 
 
 def capture(slug):
@@ -58,9 +83,10 @@ def capture(slug):
     )
     headers["Transport-Peer-IP"] = peer
     created_at = now()
+    is_bot = looks_like_bot(request.user_agent.string)
     get_database().execute("BEGIN IMMEDIATE")
     get_database().execute(
-        "INSERT INTO visits(id,link_id,created_at,ip,method,user_agent,referrer,headers,campaign)\n            VALUES(?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO visits(id,link_id,created_at,ip,method,user_agent,referrer,headers,campaign,is_bot)\n            VALUES(?,?,?,?,?,?,?,?,?,?)",
         (
             visit_id,
             link["id"],
@@ -71,12 +97,14 @@ def capture(slug):
             safe_referrer(request.referrer or ""),
             json.dumps(headers),
             json.dumps(campaign),
+            is_bot,
         ),
     )
     assign_group(
         get_database(), visit_id, link["id"], request.remote_addr or "", created_at
     )
     get_database().commit()
+    notify_webhook(link, visit_id, created_at)
     config = {
         "id": visit_id,
         "token": authentication().signer.dumps(visit_id),

@@ -11,11 +11,33 @@ CSV_COLUMNS = (
     "created_at",
     "ip",
     "user_agent",
+    "is_bot",
     "referrer",
     "interacted",
     "finished",
     "location",
+    "note",
 )
+
+
+def export_filter(link_id, campaign_id):
+    """Build the optional WHERE clause restricting an export to one link or campaign.
+
+    Args:
+        link_id: Optional single research-link identifier filter.
+        campaign_id: Optional campaign identifier filter; ignored when link_id is set.
+
+    Returns:
+        SQL WHERE-clause suffix (possibly empty) and its bound parameters tuple.
+    """
+    if link_id:
+        return " WHERE link_id=?", (link_id,)
+    if campaign_id:
+        return (
+            " WHERE link_id IN (SELECT id FROM links WHERE campaign_id=?)",
+            (campaign_id,),
+        )
+    return "", ()
 
 
 def spreadsheet_safe(value):

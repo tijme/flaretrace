@@ -99,20 +99,26 @@ def migrate_groups(connection):
             raise
 
 
-def list_groups(connection, link_id=None, limit=250):
+def list_groups(connection, link_id=None, limit=250, hide_bots=False):
     """Read recent click groups and their evidence counts for the administrator.
 
     Args:
         connection: Open SQLite connection with row access; the caller owns its lifetime.
         link_id: Research-link identifier, or None when querying all links.
         limit: Maximum number of records or requests accepted for this operation.
+        hide_bots: Whether to exclude groups whose every click was flagged as automated.
 
     Returns:
-        Recent SQLite rows with link names and aggregate evidence counts.
+        Recent SQLite rows with link names and aggregate evidence counts, including
+        each group's bot_count alongside its other evidence counts.
     """
-    where, parameters = (
-        ("WHERE g.link_id=?", (link_id, limit)) if link_id else ("", (limit,))
-    )
+    conditions, parameters = (["g.link_id=?"], [link_id]) if link_id else ([], [])
+    if hide_bots:
+        conditions.append(
+            "EXISTS (SELECT 1 FROM visits v WHERE v.group_id=g.id AND v.is_bot=0)"
+        )
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    parameters.append(limit)
     return connection.execute(
         f"""
         WITH recent AS (
@@ -124,6 +130,7 @@ def list_groups(connection, link_id=None, limit=250):
           (SELECT COUNT(*) FROM visits v WHERE v.group_id=g.id AND v.interacted=1) AS sharing_count,
           (SELECT COUNT(*) FROM visits v WHERE v.group_id=g.id AND v.finished=1) AS closed_count,
           (SELECT COUNT(*) FROM visits v WHERE v.group_id=g.id AND v.location IS NOT NULL) AS location_count,
+          (SELECT COUNT(*) FROM visits v WHERE v.group_id=g.id AND v.is_bot=1) AS bot_count,
           (SELECT COUNT(*) FROM media m JOIN visits v ON v.id=m.visit_id WHERE v.group_id=g.id) AS media_count,
           (SELECT v.id FROM visits v WHERE v.group_id=g.id ORDER BY v.created_at DESC,v.rowid DESC LIMIT 1) AS latest_visit_id
         FROM recent g JOIN links l ON l.id=g.link_id
