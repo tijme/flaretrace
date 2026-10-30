@@ -4,6 +4,45 @@ import { describe, test } from "node:test";
 import { environment } from "./harness.mjs";
 
 describe("Administration", () => {
+  test("registers a non-caching service worker only when the browser supports it", async () => {
+    const calls = [];
+    const testEnvironment = await environment();
+    testEnvironment.patch(testEnvironment.window.navigator, "serviceWorker", {
+      /** Record a registration request and resolve without a real worker.
+       * @param {string} url - Service worker script URL being registered.
+       * @param {object} options - Registration options, including the requested scope.
+       * @returns {Promise<object>} Resolved registration acknowledging the call.
+       */
+      register: async (url, options) => { calls.push([url, options]); return {}; },
+    });
+    testEnvironment.load("admin.js");
+    await testEnvironment.flush();
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][0], "/sw.js");
+    assert.equal(calls[0][1].scope, "/admin/");
+    await testEnvironment.close();
+  });
+
+  test("swallows a rejected service worker registration without an unhandled rejection", async () => {
+    const testEnvironment = await environment();
+    testEnvironment.patch(testEnvironment.window.navigator, "serviceWorker", {
+      /** Reject the registration to simulate a browser-side installability failure.
+       * @returns {Promise<never>} Always-rejecting promise for this synthetic scenario.
+       */
+      register: async () => { throw new Error("registration failed"); },
+    });
+    testEnvironment.load("admin.js");
+    await testEnvironment.flush();
+    await testEnvironment.close();
+  });
+
+  test("skips registration entirely when the browser has no service worker support", async () => {
+    const testEnvironment = await environment();
+    assert.equal("serviceWorker" in testEnvironment.window.navigator, false);
+    testEnvironment.load("admin.js");
+    await testEnvironment.close();
+  });
+
   /** Build an expandable click-group fixture with deterministic identifiers.
    * @param {unknown} total - total supplied by the current synthetic test scenario.
    * @returns {string} HTML markup for a deterministic expandable click-group fixture.

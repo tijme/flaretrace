@@ -68,6 +68,7 @@
 - **Printable QR codes.** Share a link in person with a scannable, downloadable SVG code.
 - **Campaign reporting.** Group links into a campaign for one aggregate view and export.
 - **Visit notes.** Annotate individual clicks with administrator-only notes, included in exports.
+- **Installable workspace.** Add the admin dashboard to a phone's home screen as a standalone app; nothing is cached offline.
 
 ## Usage
 
