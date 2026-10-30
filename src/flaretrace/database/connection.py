@@ -50,6 +50,10 @@ def add_missing_columns(connection):
         ("visits", "ip_info", "TEXT"),
         ("links", "template_id", "TEXT"),
         ("visits", "group_id", "TEXT REFERENCES visit_groups(id)"),
+        ("links", "max_visits", "INTEGER"),
+        ("links", "campaign_id", "TEXT REFERENCES campaigns(id)"),
+        ("visits", "is_bot", "INTEGER NOT NULL DEFAULT 0"),
+        ("visits", "note", "TEXT NOT NULL DEFAULT ''"),
     ]
     for table_name, column_name, declaration in additions:
         columns = {
@@ -103,6 +107,9 @@ def initialize_database(application):
         )
         connection.execute(
             "CREATE INDEX IF NOT EXISTS visits_pending_group ON visits(created_at) WHERE group_id IS NULL"
+        )
+        connection.execute(
+            "CREATE INDEX IF NOT EXISTS links_campaign ON links(campaign_id)"
         )
         import_inline_templates(connection)
         install_bundled_template(connection)

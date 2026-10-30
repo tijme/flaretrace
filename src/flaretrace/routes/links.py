@@ -5,14 +5,17 @@ from __future__ import annotations
 import secrets
 from datetime import datetime, timedelta
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 
 from flaretrace.utilities import now, valid_destination, UTC
 from flaretrace.database.connection import get_database
+from flaretrace.links.campaigns import list_campaigns
 from flaretrace.visits.groups import list_groups
 from flaretrace.security import admin_only
-from flaretrace.links.repository import get_link, valid_slug, public_url
+from flaretrace.links.qrcode import link_qr_svg
+from flaretrace.links.repository import get_link, parse_max_visits, valid_slug, public_url
 from flaretrace.visits.records import remove_visits
+from flaretrace.routes.visits import next_groups_url
 
 
 @admin_only
@@ -25,7 +28,9 @@ def dashboard():
     links = (
         get_database()
         .execute(
-            "SELECT l.*, COUNT(v.id) AS visits, COALESCE(SUM(v.interacted),0) AS interactions\n            FROM links l LEFT JOIN visits v ON v.link_id=l.id GROUP BY l.id ORDER BY l.created_at DESC,l.rowid DESC"
+            "SELECT l.*, COUNT(v.id) AS visits, COALESCE(SUM(v.interacted),0) AS interactions,\n"
+            "  COALESCE(SUM(CASE WHEN v.is_bot=0 THEN 1 ELSE 0 END),0) AS real_visits\n"
+            "  FROM links l LEFT JOIN visits v ON v.link_id=l.id GROUP BY l.id ORDER BY l.created_at DESC,l.rowid DESC"
         )
         .fetchall()
     )
@@ -59,6 +64,16 @@ def new_link():
         if template_id and (not selected):
             abort(400, "Template not found.")
         template_html = selected["template_html"] if selected else ""
+        campaign_id = request.form.get("campaign_id", "").strip() or None
+        if campaign_id and not get_database().execute(
+            "SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)
+        ).fetchone():
+            abort(400, "Campaign not found.")
+        try:
+            max_visits = parse_max_visits(request.form.get("max_visits", ""))
+        except ValueError as error:
+            flash(str(error), "error")
+            return (render_template("new_link.html", campaigns=list_campaigns(get_database())), 400)
         if (
             not name
             or not valid_destination(destination)
@@ -68,7 +83,7 @@ def new_link():
                 "Enter a name and a valid HTTP(S) destination, or leave the destination empty.",
                 "error",
             )
-            return (render_template("new_link.html"), 400)
+            return (render_template("new_link.html", campaigns=list_campaigns(get_database())), 400)
         expires = (
             None
             if expiry == "never"
@@ -83,9 +98,9 @@ def new_link():
                 "Link segment must be unique and contain 1–80 letters, digits, underscores or hyphens.",
                 "error",
             )
-            return (render_template("new_link.html"), 400)
+            return (render_template("new_link.html", campaigns=list_campaigns(get_database())), 400)
         get_database().execute(
-            "INSERT INTO links(id,name,destination,created_at,expires_at,template_html,public_slug,template_id) VALUES(?,?,?,?,?,?,?,?)",
+            "INSERT INTO links(id,name,destination,created_at,expires_at,template_html,public_slug,template_id,max_visits,campaign_id) VALUES(?,?,?,?,?,?,?,?,?,?)",
             (
                 slug,
                 name,
@@ -95,12 +110,14 @@ def new_link():
                 template_html,
                 public_slug,
                 template_id or None,
+                max_visits,
+                campaign_id,
             ),
         )
         get_database().commit()
         flash("Link created. Copy it below to share.", "success")
         return redirect(url_for("link_detail", slug=slug))
-    return render_template("new_link.html")
+    return render_template("new_link.html", campaigns=list_campaigns(get_database()))
 
 
 @admin_only
@@ -114,11 +131,28 @@ def link_detail(slug):
         Flask-compatible page, redirect, file response, or validation error for this route.
     """
     link = get_link(slug)
+    hide_bots = request.args.get("bots") == "hide"
+    try:
+        groups, has_more = list_groups(
+            get_database(),
+            slug,
+            hide_bots=hide_bots,
+            before=request.args.get("before"),
+        )
+    except ValueError:
+        abort(400)
+    next_url = next_groups_url("link_detail", groups, has_more, hide_bots, slug=slug)
     return render_template(
         "link_detail.html",
         link=link,
-        groups=list_groups(get_database(), slug),
+        groups=groups,
+        hide_bots=hide_bots,
+        next_url=next_url,
         public_url=public_url(slug),
+        campaigns=list_campaigns(get_database()),
+        visit_count=get_database()
+        .execute("SELECT COUNT(*) FROM visits WHERE link_id=? AND is_bot=0", (slug,))
+        .fetchone()[0],
         current_time=now(),
     )
 
@@ -139,6 +173,46 @@ def toggle_link(slug):
     )
     get_database().commit()
     return redirect(url_for("link_detail", slug=slug))
+
+
+@admin_only
+def assign_campaign(slug):
+    """Reassign one link's campaign without changing its other settings.
+
+    Args:
+        slug: Public research-link identifier stored in the links table.
+
+    Returns:
+        Flask-compatible page, redirect, file response, or validation error for this route.
+    """
+    get_link(slug)
+    campaign_id = request.form.get("campaign_id", "").strip() or None
+    if campaign_id and not get_database().execute(
+        "SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)
+    ).fetchone():
+        abort(400, "Campaign not found.")
+    get_database().execute(
+        "UPDATE links SET campaign_id=? WHERE id=?", (campaign_id, slug)
+    )
+    get_database().commit()
+    flash("Campaign updated.", "success")
+    return redirect(url_for("link_detail", slug=slug))
+
+
+@admin_only
+def link_qr(slug):
+    """Render a scannable SVG QR code for one link's public URL.
+
+    Args:
+        slug: Public research-link identifier stored in the links table.
+
+    Returns:
+        Flask-compatible page, redirect, file response, or validation error for this route.
+    """
+    svg = link_qr_svg(public_url(slug))
+    response = current_app.response_class(svg, mimetype="image/svg+xml")
+    response.headers["Content-Disposition"] = f"inline; filename=flaretrace-{slug}-qr.svg"
+    return response
 
 
 @admin_only
@@ -163,5 +237,7 @@ ROUTES = [
     ["/admin/links/new", "new_link", ["GET", "POST"]],
     ["/admin/links/<slug>", "link_detail", ["GET"]],
     ["/admin/links/<slug>/toggle", "toggle_link", ["POST"]],
+    ["/admin/links/<slug>/campaign", "assign_campaign", ["POST"]],
+    ["/admin/links/<slug>/qr.svg", "link_qr", ["GET"]],
     ["/admin/links/<slug>/delete", "delete_link", ["POST"]],
 ]

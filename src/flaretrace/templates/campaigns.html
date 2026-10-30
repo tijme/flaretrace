@@ -1,0 +1,13 @@
+{# Campaign overview. Context: campaigns with aggregate link and visit counts. #}
+{% extends 'base.html' %}
+{% block title %}Campaigns{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Campaigns</h1><p>Group links for aggregate reporting.</p></div><a class="button primary" href="{{ url_for('new_campaign') }}"><span aria-hidden="true">＋</span> Create a campaign</a></div>
+{% if campaigns %}
+<section class="panel"><div class="table-scroll"><table><thead><tr><th>Campaign</th><th>Links</th><th>Requests</th><th>Created · UTC</th><th></th></tr></thead><tbody>
+{% for campaign in campaigns %}<tr data-href="{{ url_for('campaign_detail', campaign_id=campaign.id) }}" aria-label="Open {{ campaign.name }}"><td><a class="row-link" href="{{ url_for('campaign_detail', campaign_id=campaign.id) }}">{{ campaign.name }}</a></td><td class="mono">{{ campaign.link_count }}</td><td class="mono">{{ campaign.visit_count }}</td><td>{{ campaign.created_at[:10] }}</td><td><a class="text-link" href="{{ url_for('campaign_detail', campaign_id=campaign.id) }}">View <span aria-hidden="true">↗</span></a></td></tr>{% endfor %}
+</tbody></table></div></section>
+{% else %}
+<section class="empty-state"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="12" y="20" width="52" height="32" rx="16"/><rect x="56" y="28" width="52" height="32" rx="16"/><path d="M45 40h30"/></svg><h2>No campaigns yet.</h2><p>Create a campaign, then assign links to it from each link's page.</p><a class="text-link" href="{{ url_for('new_campaign') }}">Create your first campaign <span aria-hidden="true">↗</span></a></section>
+{% endif %}
+{% endblock %}

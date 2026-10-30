@@ -1,0 +1,11 @@
+{# Campaign creation form. Context: CSRF token only. #}
+{% extends 'base.html' %}
+{% block title %}Create a campaign{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('campaigns_page') }}">← Campaigns</a>
+<div class="page-heading"><div><h1>Create a campaign.</h1><p>Group several links for one aggregate report.</p></div></div>
+<div class="form-layout"><form class="panel form-panel" method="post"><input type="hidden" name="csrf" value="{{ csrf }}">
+  <label for="campaign-name">Campaign name</label><input id="campaign-name" name="name" maxlength="100" required autofocus placeholder="e.g. Q4 awareness exercise" value="{{ request.form.get('name','') }}"><p class="field-help">Assign existing or new links to this campaign from each link's page.</p>
+  <div class="form-actions"><button class="button primary" type="submit">Create campaign <span aria-hidden="true">↗</span></button><a class="button secondary" href="{{ url_for('campaigns_page') }}">Cancel</a></div>
+</form></div>
+{% endblock %}

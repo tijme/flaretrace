@@ -15,6 +15,7 @@ authors = [{name = "Tijme Gommers"}]
 dependencies = [
     "Flask==3.1.2",
     "gunicorn==23.0.0",
+    "segno==1.6.6",
 ]
 
 [project.scripts]
@@ -33,7 +34,7 @@ Issues = "https://github.com/tijme/flaretrace/issues"
 where = ["src"]
 
 [tool.setuptools.package-data]
-flaretrace = ["templates/*.html", "landing_templates/*.html", "static/*.css", "static/*.js", "static/*.svg", "static/fonts/*"]
+flaretrace = ["templates/*.html", "landing_templates/*.html", "static/*.css", "static/*.js", "static/*.svg", "static/*.json", "static/fonts/*", "static/icons/*"]
 "flaretrace.database" = ["*.sql"]
 
 [tool.pytest.ini_options]

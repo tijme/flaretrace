@@ -1,6 +1,15 @@
 /** @file Implement admin interactions without third-party browser runtime dependencies. */
 "use strict";
 
+// No caching: every admin response already sets Cache-Control: no-store, and
+// pages here can include IP addresses, locations, and submitted media. This
+// registers a deliberately no-op service worker (see static/sw.js) only so
+// the browser's installability criteria are met and the workspace can be
+// added to a phone's home screen.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js", { scope: "/admin/" }).catch(() => {});
+}
+
 /** Retained state for one lazily loaded click group.
  * @typedef {object} ClickGroupState
  * @property {boolean} open - Whether the group’s click rows are expanded.

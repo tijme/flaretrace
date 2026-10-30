@@ -62,6 +62,13 @@
 - **Evidence exports.** Download investigation records as CSV or JSON.
 - **Custom pages.** Reuse HTML/CSS templates for each investigation.
 - **Private deployment.** Self-host with Docker and automatic HTTPS.
+- **Click notifications.** Get a signed webhook the moment someone opens a link.
+- **One-time & capped links.** Stop a link after a fixed number of real visits; automated hits never count toward the limit.
+- **Bot & preview filtering.** Crawlers and link-preview fetches are flagged automatically and can be hidden from the visit list.
+- **Printable QR codes.** Share a link in person with a scannable, downloadable SVG code.
+- **Campaign reporting.** Group links into a campaign for one aggregate view and export.
+- **Visit notes.** Annotate individual clicks with administrator-only notes, included in exports.
+- **Installable workspace.** Add the admin dashboard to a phone's home screen as a standalone app; nothing is cached offline.
 
 ## Usage
 

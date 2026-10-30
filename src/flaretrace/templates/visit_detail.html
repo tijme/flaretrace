@@ -94,6 +94,17 @@
         {% if details.ip_info %}<details id="ip-details"><summary>IP lookup response</summary><pre>{{ details.ip_info|tojson(indent=2) }}</pre></details>{% endif %}
         <details id="event-details"><summary>Original events <span class="muted">{{ events|length }}</span></summary>{% for event in events %}<div class="raw-event"><strong>{{ event.created_at|display_time('clock') }} · {{ event.kind }}</strong><pre>{{ event.payload }}</pre></div>{% else %}<p>No browser events were received.</p>{% endfor %}</details>
       </section>
+
+      <section class="record-section notes-section">
+        <h2>Note</h2>
+        <form method="post" action="{{ url_for('update_note', visit_id=visit.id) }}">
+          <input type="hidden" name="csrf" value="{{ csrf }}">
+          <label for="visit-note" class="sr-only">Note</label>
+          <textarea id="visit-note" name="note" maxlength="2000" rows="3" placeholder="e.g. Confirmed this was the intended recipient">{{ visit.note }}</textarea>
+          <button class="button secondary" type="submit">Save note</button>
+        </form>
+        <p class="field-help">Visible only to administrators. Included in exports.</p>
+      </section>
     </div>
     <aside class="visit-activity">
       <h2>What happened</h2>
