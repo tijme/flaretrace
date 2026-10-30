@@ -23,7 +23,7 @@ def application_environment(settings):
         settings: Immutable container settings, including optional explicit administrator credentials.
 
     Returns:
-        Environment for both non-root child processes; secrets are never printed.
+        Environment for the Gunicorn/Flask child process; secrets are never printed.
     """
     return dict(
         os.environ,
@@ -38,6 +38,21 @@ def application_environment(settings):
         XDG_DATA_HOME=str(settings.data_directory / "tls"),
         XDG_CONFIG_HOME=str(HEALTH_FILE.parent),
     )
+
+
+def proxy_environment(settings):
+    """Build Caddy's environment without administrator credentials it never reads.
+
+    Args:
+        settings: Immutable container settings, including optional explicit administrator credentials.
+
+    Returns:
+        A copy of the backend environment with the administrator username and password removed.
+    """
+    environment = application_environment(settings)
+    del environment["ADMIN_USERNAME"]
+    del environment["ADMIN_PASSWORD"]
+    return environment
 
 
 def prepare_runtime(settings):
@@ -93,27 +108,33 @@ def serve(settings):
         raise RuntimeError("Caddy is missing; use the published Flaretrace image")
     configuration = prepare_runtime(settings)
     commands = [
-        [
-            sys.executable,
-            "-m",
-            "gunicorn",
-            "--bind",
-            f"127.0.0.1:{settings.backend_port}",
-            "--workers",
-            "1",
-            "--threads",
-            "8",
-            "--timeout",
-            "90",
-            "--graceful-timeout",
-            "5",
-            "--keep-alive",
-            "1",
-            "flaretrace.wsgi:app",
-        ],
-        [caddy, "run", "--config", str(configuration), "--adapter", "caddyfile"],
+        (
+            [
+                sys.executable,
+                "-m",
+                "gunicorn",
+                "--bind",
+                f"127.0.0.1:{settings.backend_port}",
+                "--workers",
+                "1",
+                "--threads",
+                "8",
+                "--timeout",
+                "90",
+                "--graceful-timeout",
+                "5",
+                "--keep-alive",
+                "1",
+                "flaretrace.wsgi:app",
+            ],
+            application_environment(settings),
+        ),
+        (
+            [caddy, "run", "--config", str(configuration), "--adapter", "caddyfile"],
+            proxy_environment(settings),
+        ),
     ]
-    return supervise(commands, application_environment(settings))
+    return supervise(commands)
 
 
 def healthcheck():
