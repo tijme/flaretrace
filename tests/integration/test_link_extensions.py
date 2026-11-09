@@ -47,6 +47,55 @@ def test_bot_requests_never_count_toward_the_visit_limit(client, make_link):
     assert blocked.status_code == 410
 
 
+def test_one_time_visit_can_still_submit_its_own_events_and_media(
+    client, make_link, make_visit
+):
+    """The single visit that fills a max_visits=1 cap can still finish itself.
+
+    Opening a one-time link records the visit that meets the cap, but that
+    same visit's own browser/location events and media upload must still be
+    accepted; only a *second* visit should be turned away.
+
+    Args:
+        client: HTTP test client with an authenticated administrator session.
+        make_link: Fixture factory for creating a research link with chosen settings.
+        make_visit: Fixture factory for opening a link and decoding its capture configuration.
+    """
+    link = make_link(max_visits="1")
+    config = make_visit(link, headers={"User-Agent": NORMAL_AGENT})
+    headers = {"X-Visit-Token": config["token"]}
+    assert (
+        client.post(
+            f"/api/visits/{config['id']}/events",
+            json={"kind": "browser", "data": {"timezone": "UTC"}},
+            headers=headers,
+        ).status_code
+        == 200
+    )
+    assert (
+        client.post(
+            f"/api/visits/{config['id']}/events",
+            json={
+                "kind": "location",
+                "data": {"latitude": 51.5, "longitude": -0.1, "accuracy": 5},
+            },
+            headers=headers,
+        ).status_code
+        == 200
+    )
+    assert (
+        client.post(
+            f"/api/visits/{config['id']}/media?kind=photo&facing=front",
+            data=b"\xff\xd8\xfftest",
+            content_type="image/jpeg",
+            headers=headers,
+        ).status_code
+        == 201
+    )
+    blocked = client.get(f"/l/{link}", headers={"User-Agent": NORMAL_AGENT})
+    assert blocked.status_code == 410
+
+
 @pytest.mark.parametrize("raw", ["0", "-1", "abc", "100001", "1.5"])
 def test_new_link_rejects_an_invalid_visit_limit(client, csrf, raw):
     """Reject a non-integer, zero, negative, or out-of-range visit limit at creation.

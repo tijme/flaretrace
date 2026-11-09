@@ -10,12 +10,16 @@ from flaretrace.utilities import now
 from flaretrace.database.connection import get_database
 
 
-def get_link(slug, available=False):
+def get_link(slug, available=False, enforce_visit_limit=True):
     """Load a link and optionally reject disabled or expired records.
 
     Args:
         slug: Public research-link identifier stored in the links table.
         available: Whether disabled and expired links must be rejected.
+        enforce_visit_limit: Whether the optional visit cap is checked. A visit
+            already in progress counts toward its own cap, so callers resuming
+            that same visit pass False to let it finish submitting events/media
+            instead of being locked out by the limit it just met.
 
     Returns:
         Matching link row; unavailable records abort with an HTTP error.
@@ -26,7 +30,7 @@ def get_link(slug, available=False):
     if available and (
         not link["active"]
         or (link["expires_at"] and link["expires_at"] <= now())
-        or visit_limit_reached(link)
+        or (enforce_visit_limit and visit_limit_reached(link))
     ):
         abort(410, "This link has expired or has been disabled.")
     return link

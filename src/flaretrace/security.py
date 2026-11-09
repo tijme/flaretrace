@@ -173,7 +173,10 @@ def visitor(visit_id):
     )
     if not visit:
         abort(404)
-    get_link(visit["link_id"], available=True)
+    # This visit already exists, so it already holds its own slot under the
+    # cap; re-checking the limit here would lock it out of finishing its own
+    # submissions the moment it became the visit that met that cap.
+    get_link(visit["link_id"], available=True, enforce_visit_limit=False)
     if visit["finished"]:
         abort(409, "This capture session is already closed.")
     return visit
