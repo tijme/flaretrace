@@ -76,3 +76,5 @@ html[data-theme=dark] .visit-group-row[data-expand-group]:hover{background:#1d30
 
 /* Separate the routing form from the connection and maintenance sections. */
 .form-panel + .setup-grid{margin-top:24px}
+/* Keep the QR code, campaign picker, and note box compact and wrapping on narrow screens. */
+.qr-row{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:20px}.qr-row img{border-radius:8px;background:#fff;flex-shrink:0}.qr-row .field-help{margin:0;flex:1 1 200px;min-width:0}.campaign-panel{margin-top:24px;padding:24px}.campaign-panel form{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.campaign-panel select{flex:1 1 200px;min-width:0}.notes-section textarea{min-height:90px;margin-bottom:12px}

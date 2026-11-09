@@ -100,9 +100,9 @@ def test_settings_spacing_and_responsive_layout(page, login, live_server, width,
     page.goto(live_server + "/admin/setup")
     page.evaluate("document.fonts.ready")
     expect(page.locator("html")).to_have_attribute("data-theme", theme)
-    first = page.locator("form.panel").bounding_box()
+    last_form = page.locator("form.panel").last.bounding_box()
     sections = page.locator(".setup-grid").bounding_box()
-    assert sections["y"] - (first["y"] + first["height"]) >= 23.9
+    assert sections["y"] - (last_form["y"] + last_form["height"]) >= 23.9
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
     page.get_by_label("Homepage redirect URL", exact=True).fill(
         "https://example.org/updated"

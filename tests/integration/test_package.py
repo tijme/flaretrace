@@ -52,11 +52,15 @@ client = app.test_client()
 assert client.get("/healthz").status_code == 200
 assert client.get("/admin/login").status_code == 200
 for asset in ("app.css", "admin.js", "capture.js", "theme.js", "mark.svg",
-              "fonts/dm-sans-variable.ttf", "fonts/OFL.txt"):
+              "fonts/dm-sans-variable.ttf", "fonts/OFL.txt", "manifest.json",
+              "sw.js", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-180.png"):
     response = client.get("/static/" + asset)
     assert response.status_code == 200, asset
     assert response.data, asset
     response.close()
+response = client.get("/sw.js")
+assert response.status_code == 200
+assert response.data, "/sw.js"
 """,
             ],
             cwd=self.directory.name,

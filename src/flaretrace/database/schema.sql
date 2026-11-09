@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS template_library (id TEXT PRIMARY KEY, name TEXT NOT 
 -- Links: id is the stable internal identifier; name labels the investigation.
 -- destination is an optional final HTTP(S) URL; active controls public availability.
 -- created_at/expires_at bound availability; template_html preserves the authored landing HTML.
--- Later migrations add public_slug and template_id without rewriting existing records.
+-- Later migrations add public_slug, template_id, max_visits, and campaign_id without
+-- rewriting existing records.
 CREATE TABLE IF NOT EXISTS links (
  id TEXT PRIMARY KEY, name TEXT NOT NULL, destination TEXT NOT NULL DEFAULT '',
  created_at TEXT NOT NULL, expires_at TEXT, active INTEGER NOT NULL DEFAULT 1,
@@ -17,7 +18,8 @@ CREATE TABLE IF NOT EXISTS links (
 -- created_at/ip/method/user_agent record request context; referrer strips sensitive URL parts.
 -- headers/campaign/browser/location are JSON mappings; absent shared evidence remains NULL.
 -- interacted records browser sharing; finished prevents further signed submissions.
--- Later migrations add optional ip_info JSON and a visit_groups foreign key, group_id.
+-- Later migrations add optional ip_info JSON, a visit_groups foreign key (group_id), an
+-- administrator-authored note, and an automated is_bot classification.
 CREATE TABLE IF NOT EXISTS visits (
  id TEXT PRIMARY KEY, link_id TEXT NOT NULL REFERENCES links(id) ON DELETE CASCADE,
  created_at TEXT NOT NULL, ip TEXT NOT NULL, method TEXT NOT NULL,
@@ -52,3 +54,8 @@ CREATE TABLE IF NOT EXISTS media (
  mime TEXT NOT NULL, filename TEXT NOT NULL, size INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS media_visit ON media(visit_id);
+-- Campaigns: id is private; name labels a group of links for aggregate reporting.
+-- A later migration adds the owning links.campaign_id column; see add_missing_columns.
+CREATE TABLE IF NOT EXISTS campaigns (
+ id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at TEXT NOT NULL
+);

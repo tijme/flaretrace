@@ -1,0 +1,16 @@
+{# Campaign inspector. Context: campaign and its assigned links with visit counts. #}
+{% extends 'base.html' %}
+{% block title %}{{ campaign.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('campaigns_page') }}">← Campaigns</a>
+<div class="page-heading"><div><h1>{{ campaign.name }}</h1><p>Created {{ campaign.created_at[:10] }}</p></div></div>
+<div class="section-bar"><h2>Links in this campaign <span class="count">{{ links|length }}</span></h2><div class="inline-actions"><a class="text-link" href="{{ url_for('export', campaign=campaign.id, format='csv') }}">Export CSV</a><a class="text-link" href="{{ url_for('export', campaign=campaign.id) }}">Export JSON</a></div></div>
+{% if links %}
+<section class="panel"><div class="table-scroll"><table><thead><tr><th>Link</th><th>Status</th><th>Requests</th><th>Sharing actions</th><th>Created · UTC</th><th></th></tr></thead><tbody>
+{% for link in links %}<tr data-href="{{ url_for('link_detail', slug=link.id) }}" aria-label="Open {{ link.name }}"><td><a class="row-link" href="{{ url_for('link_detail', slug=link.id) }}">{{ link.name }}<span class="subtext mono">/l/{{ link.public_slug or link.id }}</span></a></td><td>{% if not link.active %}<span class="status neutral">Disabled</span>{% else %}<span class="status green">Active</span>{% endif %}</td><td class="mono">{{ link.visits }}</td><td class="mono">{{ link.interactions }}</td><td>{{ link.created_at[:10] }}</td><td><a class="text-link" href="{{ url_for('link_detail', slug=link.id) }}">View <span aria-hidden="true">↗</span></a></td></tr>{% endfor %}
+</tbody></table></div></section>
+{% else %}
+<section class="empty-state"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="12" y="20" width="52" height="32" rx="16"/><rect x="56" y="28" width="52" height="32" rx="16"/><path d="M45 40h30"/></svg><h2>No links assigned yet.</h2><p>Open a link and assign it to this campaign, or pick this campaign when creating a new one.</p></section>
+{% endif %}
+<div class="danger-zone"><form method="post" action="{{ url_for('delete_campaign_route', campaign_id=campaign.id) }}" data-confirm="Delete this campaign? Its links and their visits are kept and simply unassigned."><input type="hidden" name="csrf" value="{{ csrf }}"><button class="button danger" type="submit">Delete campaign</button></form></div>
+{% endblock %}

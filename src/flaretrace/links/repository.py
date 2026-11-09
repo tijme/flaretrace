@@ -10,12 +10,16 @@ from flaretrace.utilities import now
 from flaretrace.database.connection import get_database
 
 
-def get_link(slug, available=False):
+def get_link(slug, available=False, enforce_visit_limit=True):
     """Load a link and optionally reject disabled or expired records.
 
     Args:
         slug: Public research-link identifier stored in the links table.
         available: Whether disabled and expired links must be rejected.
+        enforce_visit_limit: Whether the optional visit cap is checked. A visit
+            already in progress counts toward its own cap, so callers resuming
+            that same visit pass False to let it finish submitting events/media
+            instead of being locked out by the limit it just met.
 
     Returns:
         Matching link row; unavailable records abort with an HTTP error.
@@ -24,10 +28,33 @@ def get_link(slug, available=False):
     if not link:
         abort(404, "This link does not exist.")
     if available and (
-        not link["active"] or (link["expires_at"] and link["expires_at"] <= now())
+        not link["active"]
+        or (link["expires_at"] and link["expires_at"] <= now())
+        or (enforce_visit_limit and visit_limit_reached(link))
     ):
         abort(410, "This link has expired or has been disabled.")
     return link
+
+
+def visit_limit_reached(link):
+    """Check whether a link's optional visit cap has already been met by real visitors.
+
+    Automated bot, crawler, and link-preview requests never count toward the cap,
+    so a one-time link survives an email scanner or chat-app preview fetch.
+
+    Args:
+        link: Stored link row supplying the optional max_visits cap.
+
+    Returns:
+        True when max_visits is set and at least that many non-automated visits
+        are already recorded.
+    """
+    if link["max_visits"] is None:
+        return False
+    count = get_database().execute(
+        "SELECT COUNT(*) FROM visits WHERE link_id=? AND is_bot=0", (link["id"],)
+    ).fetchone()[0]
+    return count >= link["max_visits"]
 
 
 def get_public_link(slug):
@@ -47,6 +74,28 @@ def get_public_link(slug):
     if not row:
         abort(404, "This link does not exist.")
     return get_link(row["id"], available=True)
+
+
+def parse_max_visits(raw):
+    """Parse an optional visit cap, rejecting anything but a positive integer.
+
+    Args:
+        raw: Submitted max_visits form value; blank means unlimited.
+
+    Returns:
+        Positive integer cap, or None for unlimited.
+
+    Raises:
+        ValueError: The value is non-blank but not an integer from 1 to 100000.
+    """
+    value = raw.strip()
+    if not value:
+        return None
+    if not value.isdigit() or not 1 <= int(value) <= 100000:
+        raise ValueError(
+            "Visit limit must be blank, or a whole number from 1 to 100000."
+        )
+    return int(value)
 
 
 def valid_slug(slug, own_id=None):

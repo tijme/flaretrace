@@ -33,12 +33,12 @@ def stop_processes(children, grace_seconds=10):
             child.wait()
 
 
-def supervise(commands, environment, shutdown=None):
+def supervise(commands, shutdown=None):
     """Exit the container if either service fails and forward termination to both services.
 
     Args:
-        commands: Ordered executable/argument lists for Gunicorn and Caddy.
-        environment: Child-process environment containing validated application settings.
+        commands: Ordered (argv, environment) pairs for Gunicorn and Caddy; each service gets
+            only the environment it needs, so secrets never reach a process without a use for them.
         shutdown: Optional Event used by tests; otherwise signal handlers request shutdown.
 
     Returns:
@@ -61,7 +61,7 @@ def supervise(commands, environment, shutdown=None):
         if shutdown is None:
             for signum in (signal.SIGTERM, signal.SIGINT):
                 previous_handlers[signum] = signal.signal(signum, request_shutdown)
-        for command in commands:
+        for command, environment in commands:
             children.append(
                 subprocess.Popen(command, env=environment, start_new_session=True)
             )

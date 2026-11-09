@@ -58,7 +58,7 @@ def test_unexpected_service_exit_stops_the_container(monkeypatch, status, expect
     cleanup = Mock()
     monkeypatch.setattr(processes.subprocess, "Popen", Mock(return_value=child))
     monkeypatch.setattr(processes, "stop_processes", cleanup)
-    assert processes.supervise([["server"]], {}, stopping) == expected
+    assert processes.supervise([(["server"], {})], stopping) == expected
     cleanup.assert_called_once_with([child])
 
 
@@ -77,7 +77,7 @@ def test_partial_startup_failure_reaps_started_children(monkeypatch):
     )
     monkeypatch.setattr(processes, "stop_processes", cleanup)
     with pytest.raises(OSError):
-        processes.supervise([["app"], ["proxy"]], {}, Mock())
+        processes.supervise([(["app"], {}), (["proxy"], {})], Mock())
     cleanup.assert_called_once_with([child])
 
 
@@ -112,7 +112,7 @@ def test_signals_request_shutdown_and_original_handlers_are_restored(monkeypatch
     monkeypatch.setattr(processes.threading, "Event", lambda: stopping)
     monkeypatch.setattr(processes.subprocess, "Popen", Mock(return_value=child))
     monkeypatch.setattr(processes, "stop_processes", Mock())
-    assert processes.supervise([["app"], ["proxy"]], {}) == 0
+    assert processes.supervise([(["app"], {}), (["proxy"], {})]) == 0
     assert stopping.set.call_count == 2
     assert [handler for signum, handler in handlers[-2:]] == [
         signal.SIG_DFL,

@@ -22,6 +22,15 @@ def test_child_environment_uses_only_the_bundled_proxy():
     )
 
 
+def test_proxy_environment_omits_administrator_credentials():
+    """Keep the administrator username and password out of Caddy's process environment."""
+    settings = parse_settings(["--domain", "trace.example.com", "--auto-tls"], {})
+    environment = cli.proxy_environment(settings)
+    assert "ADMIN_USERNAME" not in environment
+    assert "ADMIN_PASSWORD" not in environment
+    assert environment["PUBLIC_BASE_URL"] == "https://trace.example.com"
+
+
 def test_runtime_configuration_is_written_after_storage_preparation(
     tmp_path, monkeypatch
 ):
@@ -78,9 +87,11 @@ def test_serve_uses_loopback_gunicorn_and_the_bundled_caddy(monkeypatch):
     )
     monkeypatch.setattr(cli, "supervise", supervisor)
     assert cli.serve(settings) == 23
-    commands, environment = supervisor.call_args.args
-    assert "127.0.0.1:8000" in commands[0]
-    assert commands[1] == [
+    (commands,) = supervisor.call_args.args
+    backend_command, backend_environment = commands[0]
+    proxy_command, proxy_environment = commands[1]
+    assert "127.0.0.1:8000" in backend_command
+    assert proxy_command == [
         "/usr/local/bin/caddy",
         "run",
         "--config",
@@ -88,7 +99,10 @@ def test_serve_uses_loopback_gunicorn_and_the_bundled_caddy(monkeypatch):
         "--adapter",
         "caddyfile",
     ]
-    assert environment["TRUST_PROXY"] == "1"
+    assert backend_environment["TRUST_PROXY"] == "1"
+    assert backend_environment["ADMIN_USERNAME"] == "admin"
+    assert "ADMIN_USERNAME" not in proxy_environment
+    assert "ADMIN_PASSWORD" not in proxy_environment
     monkeypatch.setattr(cli.shutil, "which", lambda name: None)
     with pytest.raises(RuntimeError):
         cli.serve(settings)

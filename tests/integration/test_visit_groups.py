@@ -116,8 +116,9 @@ class VisitGroupTests(TestCase):
         self.assertNotEqual(second, first)  # 301 seconds after the group's first click.
         self.assertEqual(self.seed("e", 899), second)
         with self.database_connection() as connection:
-            groups = list_groups(connection)
+            groups, has_more = list_groups(connection)
             self.assertEqual([row["visit_count"] for row in groups], [2, 3])
+            self.assertFalse(has_more)
             self.assertEqual(
                 connection.execute("SELECT COUNT(*) FROM visits").fetchone()[0], 5
             )
@@ -177,7 +178,7 @@ class VisitGroupTests(TestCase):
         self.seed("b", 60)
         self.client.post("/admin/visits/b/delete", data={"csrf": self.csrf})
         with self.database_connection() as connection:
-            rows = list_groups(connection)
+            rows, _ = list_groups(connection)
             self.assertEqual(rows[0]["visit_count"], 1)
             self.assertEqual(rows[0]["last_at"], rows[0]["started_at"])
         self.client.post("/admin/visits/a/delete", data={"csrf": self.csrf})
@@ -241,7 +242,8 @@ class VisitGroupTests(TestCase):
             self.assertEqual(
                 connection.execute("SELECT COUNT(*) FROM visit_groups").fetchone()[0], 1
             )
-            self.assertEqual(list_groups(connection)[0]["visit_count"], 20)
+            groups, _ = list_groups(connection)
+            self.assertEqual(groups[0]["visit_count"], 20)
 
     def test_detail_summary_is_readable_and_raw_values_remain_escaped(self):
         """Verify detail summary is readable and raw values remain escaped."""

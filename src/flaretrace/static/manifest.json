@@ -1,0 +1,15 @@
+{
+  "name": "Flaretrace",
+  "short_name": "Flaretrace",
+  "description": "Self-hosted tracking links for IP logging, GPS collection, camera captures, and browser insights.",
+  "start_url": "/admin",
+  "scope": "/admin/",
+  "id": "/admin",
+  "display": "standalone",
+  "background_color": "#f4f8ef",
+  "theme_color": "#2b6047",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

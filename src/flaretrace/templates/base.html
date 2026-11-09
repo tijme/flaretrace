@@ -5,8 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#2b6047">
   <title>{% block title %}Flaretrace{% endblock %}{% block title_suffix %} · Flaretrace{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='mark.svg') }}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-180.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
   <script src="{{ url_for('static', filename='theme.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
   <script src="{{ url_for('static', filename='admin.js') }}" defer></script>
@@ -19,6 +22,7 @@
     <a class="brand" href="{{ url_for('dashboard') }}"><img src="{{ url_for('static', filename='mark.svg') }}" width="30" height="30" alt="">Flaretrace<span class="brand-dot"></span></a>
     <nav aria-label="Main navigation"><a href="{{ url_for('templates_page') }}" {% if request.endpoint in ['templates_page','edit_saved_template'] %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12"/></svg>Templates</a>
       <a {% if request.endpoint in ['dashboard','link_detail','new_link'] %}aria-current="page"{% endif %} href="{{ url_for('dashboard') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 1 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"/></svg>Links</a>
+      <a {% if request.endpoint in ['campaigns_page','campaign_detail','new_campaign'] %}aria-current="page"{% endif %} href="{{ url_for('campaigns_page') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="11" height="4" rx="1"/><rect x="3" y="16" width="14" height="4" rx="1"/></svg>Campaigns</a>
       <a {% if request.endpoint in ['visits_page','visit_detail'] %}aria-current="page"{% endif %} href="{{ url_for('visits_page') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Visits</a>
       <a {% if request.endpoint == 'setup' %}aria-current="page"{% endif %} href="{{ url_for('setup') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg>Settings</a>
     </nav>

@@ -5,7 +5,7 @@
   <tbody>
   {% for group in groups %}
     <tr class="visit-group-row" data-group-row="{{ group.id }}" {% if group.visit_count > 1 %}data-expand-group="{{ group.id }}" tabindex="0" aria-label="Expand {{ group.visit_count }} clicks from {{ group.ip }}"{% else %}data-href="{{ url_for('visit_detail', visit_id=group.latest_visit_id) }}" aria-label="Open click {{ group.latest_visit_id[:8] }}"{% endif %}>
-      <td class="visit-leading"><span class="mono">{{ group.last_at|display_time('date') }}</span><span class="subtext mono">{{ group.last_at|display_time('clock') }}{% if group.visit_count > 1 %} · since {{ group.started_at|display_time('clock') }}{% endif %}</span><span class="group-mobile-ip mono">{{ group.ip or 'Unknown IP' }}</span>{% if group.visit_count > 1 %}<button class="group-toggle" id="toggle-{{ group.id }}" type="button" data-group-toggle="{{ group.id }}" aria-expanded="false" aria-controls="clicks-{{ group.id }}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6"/></svg><span>{{ group.visit_count }} clicks</span></button>{% endif %}</td>
+      <td class="visit-leading"><span class="mono">{{ group.last_at|display_time('date') }}</span><span class="subtext mono">{{ group.last_at|display_time('clock') }}{% if group.visit_count > 1 %} · since {{ group.started_at|display_time('clock') }}{% endif %}</span><span class="group-mobile-ip mono">{{ group.ip or 'Unknown IP' }}</span>{% if group.bot_count %}<span class="subtext">{{ group.bot_count }} automated</span>{% endif %}{% if group.visit_count > 1 %}<button class="group-toggle" id="toggle-{{ group.id }}" type="button" data-group-toggle="{{ group.id }}" aria-expanded="false" aria-controls="clicks-{{ group.id }}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6"/></svg><span>{{ group.visit_count }} clicks</span></button>{% endif %}</td>
       {% if show_link %}<td>{{ group.link_name }}</td>{% endif %}
       <td class="mono">{{ group.ip or 'Unknown IP' }}</td>
       <td><span class="status {{ 'green' if group.sharing_count else 'neutral' }}">{{ group.sharing_count|string + ' started' if group.sharing_count else 'Request only' }}</span></td>
@@ -25,3 +25,4 @@
   </tbody>
 </table>
 </div>
+{% if next_url %}<div class="group-pagination"><a class="button secondary" href="{{ next_url }}">Load older visits</a></div>{% endif %}

@@ -5,6 +5,8 @@ import json
 import math
 import re
 
+from flaretrace.visits.botcheck import looks_like_bot
+
 
 def mapping(value):
     """Accept mapping-shaped metadata and replace unsupported shapes with an empty object.
@@ -482,13 +484,7 @@ def device_summary(visit, browser):
         "viewport": viewport_dimensions(mapping(browser.get("viewport"))),
         "connection": text(connection.get("effectiveType")),
         "referrer": visit["referrer"] or "Direct / not supplied",
-        "possible_bot": bool(
-            re.search(
-                r"bot\b|crawler|spider|preview|facebookexternalhit|headless",
-                agent,
-                re.I,
-            )
-        ),
+        "possible_bot": looks_like_bot(agent),
     }
 
 
